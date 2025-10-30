@@ -53,7 +53,7 @@ export default function DashboardTamilPage() {
                 <CardTitle className="text-sm font-medium">
                   மொத்த கை இருப்பு
                 </CardTitle>
-                <p className="text-4xl font-bold">₹73,000</p>
+                <p className="text-4xl font-bold">₹1,00,000</p>
               </div>
               <Copy className="cursor-pointer" />
             </CardHeader>

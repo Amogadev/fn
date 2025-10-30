@@ -12,9 +12,13 @@ import {
   Users2,
   Gift,
   UserPlus,
+  LayoutGrid,
+  BarChart,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const ActionCard = ({
   title,
@@ -49,6 +53,14 @@ const ActionCard = ({
   return CardContent;
 };
 
+const navItems = [
+    { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
+    { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
+    { href: "#", label: "தீபாவளி சிட்", icon: Gift },
+    { href: "#", label: "அறிக்கைகள்", icon: BarChart },
+    { href: "#", label: "அமைப்புகள்", icon: Settings },
+];
+
 
 export default function DashboardTamilPage() {
   const currentDate = new Date().toLocaleDateString('ta-IN', {
@@ -66,6 +78,21 @@ export default function DashboardTamilPage() {
             <p className="text-lg font-semibold">{currentDate.split(' ')[1]} {currentDate.split(' ')[0]}, {currentDate.split(' ')[2]}</p>
           </div>
         </header>
+
+        <Card>
+            <CardContent className="p-2">
+                <nav className="flex items-center space-x-1">
+                    {navItems.map((item) => (
+                        <Button key={item.href} asChild variant="ghost" className="flex-1 justify-start gap-2">
+                            <Link href={item.href}>
+                                <item.icon className="h-4 w-4" />
+                                {item.label}
+                            </Link>
+                        </Button>
+                    ))}
+                </nav>
+            </CardContent>
+        </Card>
           
         <Card className="bg-primary text-primary-foreground">
             <CardHeader className="flex flex-row items-start justify-between">

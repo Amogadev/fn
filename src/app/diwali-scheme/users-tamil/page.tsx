@@ -7,13 +7,25 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-const diwaliSchemeUsers = [
+const initialDiwaliSchemeUsers = [
   {
     id: "ds_user_001",
     name: "சுனிதா",
@@ -33,8 +45,18 @@ const diwaliSchemeUsers = [
 ];
 
 export default function DiwaliSchemeUsersPage() {
+  const { toast } = useToast();
   const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const [diwaliSchemeUsers, setDiwaliSchemeUsers] = useState(initialDiwaliSchemeUsers);
   
+  const handleDeleteUser = (userId: string) => {
+    setDiwaliSchemeUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+    toast({
+        title: "பயனர் நீக்கப்பட்டார்",
+        description: "தேர்ந்தெடுக்கப்பட்ட பயனர் வெற்றிகரமாக நீக்கப்பட்டார்.",
+    });
+  };
+
   return (
     <TamilAppLayout>
       <div className="space-y-6">
@@ -96,7 +118,23 @@ export default function DiwaliSchemeUsersPage() {
                     <div className="flex justify-around w-full">
                         <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
                         <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
-                        <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the user <span className="font-bold">{user.name}</span>.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </CardFooter>
               </Card>

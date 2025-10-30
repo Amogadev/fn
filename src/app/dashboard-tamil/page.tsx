@@ -64,7 +64,6 @@ export default function DashboardTamilPage() {
           <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
           <div className="text-right">
             <p className="text-lg font-semibold">{currentDate.split(' ')[1]} {currentDate.split(' ')[0]}, {currentDate.split(' ')[2]}</p>
-            <p className="text-sm text-muted-foreground">Today</p>
           </div>
         </header>
           

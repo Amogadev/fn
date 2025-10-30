@@ -53,7 +53,7 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               {navItems.map((item) => (
-                <NavLink key={item.href} {...item} isActive={pathname === item.href} />
+                <NavLink key={`${item.href}-${item.label}`} {...item} isActive={pathname === item.href} />
               ))}
             </nav>
           </div>
@@ -83,7 +83,7 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
                 {navItems.map((item) => (
                     <Link
-                        key={item.href}
+                        key={`${item.href}-${item.label}`}
                         href={item.href}
                         className={cn(
                             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",

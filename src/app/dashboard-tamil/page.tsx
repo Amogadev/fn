@@ -79,11 +79,11 @@ export default function DashboardTamilPage() {
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
 
   // Sample data to simulate backend
-  const [totalLoanRepayments] = useState(12000); 
-  const [totalDiwaliSavings] = useState(13000); 
-  const [loanUsersCount] = useState(3);
-  const [diwaliUsersCount] = useState(2);
-  const [totalLoansGiven] = useState(40000);
+  const [totalCashOnHand] = useState(100000); 
+  const [loanUsersCount] = useState(0);
+  const [diwaliUsersCount] = useState(0);
+  const [totalLoansGiven] = useState(0);
+  const [totalDiwaliSavings] = useState(0);
   
   const [currentDate, setCurrentDate] = useState('');
 
@@ -101,8 +101,6 @@ export default function DashboardTamilPage() {
     setTheme(newTheme);
     setIsDarkMode(newTheme === 'dark');
   }
-
-  const totalCashOnHand = totalLoanRepayments + totalDiwaliSavings;
 
   return (
     <TamilAppLayout>

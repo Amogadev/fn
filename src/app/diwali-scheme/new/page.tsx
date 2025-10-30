@@ -13,9 +13,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Camera, User } from "lucide-react";
+import { ArrowLeft, Camera, Info } from "lucide-react";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NewDiwaliSchemePage() {
   const { toast } = useToast();
@@ -77,7 +84,7 @@ export default function NewDiwaliSchemePage() {
 
 
   return (
-    <TamilAppLayout showFloatingNav={false}>
+    <TamilAppLayout showFloatingNav>
       <div className="space-y-8">
         <header className="flex items-center justify-between">
             <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
@@ -177,6 +184,67 @@ export default function NewDiwaliSchemePage() {
               </CardContent>
             </Card>
         </div>
+
+        <div className="space-y-4">
+            <p className="text-lg font-semibold text-primary">படி 2: பங்களிப்புத் திட்டம்</p>
+            <p className="text-muted-foreground">முதலில் படி 1 ஐ முடிக்கவும்</p>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>பங்களிப்புத் திட்டம்</CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>பங்களிப்புத் தொகை</Label>
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="100">₹100</SelectItem>
+                                <SelectItem value="1000">₹1,000</SelectItem>
+                                <SelectItem value="5000">₹5,000</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>கால இடைவெளி</Label>
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="weekly">வாராந்திர</SelectItem>
+                                <SelectItem value="monthly">மாதாந்திர</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>இது எப்படி வேலை செய்கிறது</AlertTitle>
+                <AlertDescription>
+                ₹100, ₹1,000, அல்லது ₹5,000 வாராந்திரம் அல்லது மாதாந்திரம் சேமித்து, தீபாவளி அன்று +10% போனஸ் பெறுங்கள். முன்கூட்டியே எடுத்தால் உங்கள் மொத்த சேமிப்பில் 10% கழிக்கப்படும்.
+                </AlertDescription>
+            </Alert>
+        </div>
+        
+        <div className="space-y-4">
+            <Card className="bg-muted/50">
+                <CardHeader>
+                    <CardTitle>மதிப்பிடப்பட்ட தீபாவளி வருமானம்</CardTitle>
+                    <CardDescription>உங்கள் மொத்த பங்களிப்பு மற்றும் உங்கள் 10% போனஸ்.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-4xl font-bold">₹0</p>
+                </CardContent>
+            </Card>
+
+            <Button className="w-full">பதிவு செய்து அடுத்து செல்லவும்</Button>
+        </div>
+
       </div>
       <video ref={videoRef} className="hidden" autoPlay muted playsInline />
     </TamilAppLayout>

@@ -5,129 +5,130 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 
 const loanUsers = [
   {
     id: "user_001",
     name: "குமார்",
-    loanAmount: "₹10,000",
-    paidAmount: "₹2,000",
+    loanAmount: 10000,
+    paidAmount: 3000,
     status: "செயலில்",
-    nextDueDate: "2024-08-15",
+    avatarUrl: "https://picsum.photos/seed/101/100/100",
   },
   {
     id: "user_002",
     name: "பிரியா",
-    loanAmount: "₹5,000",
-    paidAmount: "₹5,000",
+    loanAmount: 5000,
+    paidAmount: 5000,
     status: "முடிந்தது",
-    nextDueDate: "-",
+    avatarUrl: "https://picsum.photos/seed/102/100/100",
   },
   {
     id: "user_003",
-    name: "ராஜேஷ்",
-    loanAmount: "₹25,000",
-    paidAmount: "₹10,000",
+    name: "அருண்",
+    loanAmount: 15000,
+    paidAmount: 5000,
     status: "செயலில்",
-    nextDueDate: "2024-08-20",
+    avatarUrl: "https://picsum.photos/seed/103/100/100",
+  },
+    {
+    id: "user_004",
+    name: "விஜய்",
+    loanAmount: 0,
+    paidAmount: 0,
+    status: "கடன் இல்லை",
+    avatarUrl: "https://picsum.photos/seed/104/100/100",
   },
 ];
 
-const getStatusVariant = (status: string) => {
-  switch (status) {
-    case "செயலில்":
-      return "secondary";
-    case "முடிந்தது":
-      return "default";
-    default:
-      return "outline";
-  }
-};
 
 export default function LoanUsersPage() {
-  return (
+    const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    return (
     <TamilAppLayout>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight font-headline">
-                    கடன் பயனர் பட்டியல்
-                </h1>
-                <p className="text-muted-foreground">
-                    அனைத்து செயலில் உள்ள மற்றும் முடிக்கப்பட்ட கடன்களை நிர்வகிக்கவும்.
-                </p>
-            </div>
-            <div className="flex gap-4">
+            <div className="flex items-center gap-4">
                 <Link href="/dashboard-tamil">
-                    <Button variant="outline">
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        முகப்புக்குத் திரும்பு
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
                     </Button>
                 </Link>
-                <Link href="/loans/new-tamil">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        புதிய பயனரைச் சேர்
-                    </Button>
-                </Link>
+                <h1 className="text-2xl font-bold tracking-tight font-headline">
+                    வணக்கம்.
+                </h1>
+            </div>
+            <div className="text-right">
+                <p className="text-sm text-muted-foreground">{currentDate}</p>
             </div>
         </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>செயலில் உள்ள பயனர்கள்</CardTitle>
-            <CardDescription>கடன் திட்டத்தில் பதிவுசெய்யப்பட்ட பயனர்களின் பட்டியல்.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>பெயர்</TableHead>
-                  <TableHead>கடன் தொகை</TableHead>
-                  <TableHead>செலுத்திய தொகை</TableHead>
-                  <TableHead>நிலை</TableHead>
-                  <TableHead>அடுத்த தவணை தேதி</TableHead>
-                  <TableHead className="text-right">செயல்கள்</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loanUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.loanAmount}</TableCell>
-                    <TableCell>{user.paidAmount}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusVariant(user.status)}>
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{user.nextDueDate}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm">
-                        நிர்வகி
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <div>
+            <h2 className="text-3xl font-bold mb-4 font-headline">கடன் பயனர்கள்</h2>
+            <div className="flex justify-between items-center gap-4">
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="பயனரைத் தேடு..." className="pl-10" />
+                </div>
+                <div className="flex gap-2">
+                    <Link href="/dashboard-tamil">
+                        <Button variant="outline">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            பின்செல்
+                        </Button>
+                    </Link>
+                    <Link href="/loans/new-tamil">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            புதிய பயனர்
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {loanUsers.map((user) => (
+              <Card key={user.id} className="flex flex-col text-center">
+                <CardContent className="flex-1 p-6 space-y-4">
+                    <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
+                        <AvatarImage src={user.avatarUrl} alt={user.name}/>
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <h3 className="text-xl font-semibold">{user.name}</h3>
+                    {user.status === 'முடிந்தது' ? (
+                         <div>
+                            <p className="text-muted-foreground">கடைசி கடன்: {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount)}</p>
+                            <Badge variant="default" className="mt-2">முழுதும் செலுத்தப்பட்டது</Badge>
+                         </div>
+                    ) : user.status === 'கடன் இல்லை' ? (
+                         <Badge variant="secondary">கடன்கள் இல்லை</Badge>
+                    ) : (
+                        <div className="space-y-1 text-sm">
+                            <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount)}</span></div>
+                            <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.paidAmount)}</span></div>
+                            <div className="flex justify-between font-bold"><span>நிலுவை:</span> <span>{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount - user.paidAmount)}</span></div>
+                        </div>
+                    )}
+                </CardContent>
+                <CardFooter className="p-4 border-t">
+                    <div className="flex justify-around w-full">
+                        <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
+                    </div>
+                </CardFooter>
+              </Card>
+            ))}
+        </div>
       </div>
     </TamilAppLayout>
   );

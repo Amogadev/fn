@@ -5,107 +5,103 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 
 const diwaliSchemeUsers = [
   {
     id: "ds_user_001",
     name: "சுனிதா",
-    contribution: "₹1,000",
+    contribution: 1000,
     frequency: "மாதாந்திர",
-    totalSaved: "₹5,000",
-    joinDate: "2024-03-10",
+    totalSaved: 5000,
+    avatarUrl: "https://picsum.photos/seed/201/100/100",
   },
   {
     id: "ds_user_002",
     name: "ரவி",
-    contribution: "₹500",
+    contribution: 500,
     frequency: "வாராந்திர",
-    totalSaved: "₹8,000",
-    joinDate: "2024-02-20",
+    totalSaved: 8000,
+    avatarUrl: "https://picsum.photos/seed/202/100/100",
   },
 ];
 
 export default function DiwaliSchemeUsersPage() {
+  const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  
   return (
     <TamilAppLayout>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight font-headline">
-                    தீபாவளி சிட் பயனர் பட்டியல்
-                </h1>
-                <p className="text-muted-foreground">
-                    தீபாவளி சேமிப்புத் திட்டத்தில் பங்கேற்கும் பயனர்களைக் காண்க.
-                </p>
-            </div>
-             <div className="flex gap-4">
+            <div className="flex items-center gap-4">
                 <Link href="/dashboard-tamil">
-                    <Button variant="outline">
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        முகப்புக்குத் திரும்பு
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
                     </Button>
                 </Link>
-                <Link href="/diwali-scheme/new">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        புதிய பயனரைச் சேர்
-                    </Button>
-                </Link>
+                <h1 className="text-2xl font-bold tracking-tight font-headline">
+                    வணக்கம்.
+                </h1>
+            </div>
+            <div className="text-right">
+                <p className="text-sm text-muted-foreground">{currentDate}</p>
             </div>
         </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>பங்கேற்பாளர்கள்</CardTitle>
-            <CardDescription>
-              தீபாவளி சேமிப்புத் திட்டத்தில் பதிவுசெய்யப்பட்ட பயனர்களின் பட்டியல்.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>பெயர்</TableHead>
-                  <TableHead>பங்களிப்பு</TableHead>
-                  <TableHead>கால இடைவெளி</TableHead>
-                  <TableHead>மொத்த சேமிப்பு</TableHead>
-                  <TableHead>சேர்ந்த தேதி</TableHead>
-                  <TableHead className="text-right">செயல்கள்</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {diwaliSchemeUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.contribution}</TableCell>
-                    <TableCell>{user.frequency}</TableCell>
-                    <TableCell>{user.totalSaved}</TableCell>
-                    <TableCell>{user.joinDate}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm">
-                        பார்வையிடு
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <div>
+            <h2 className="text-3xl font-bold mb-4 font-headline">தீபாவளி சிட் பயனர்கள்</h2>
+            <div className="flex justify-between items-center gap-4">
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="பயனரைத் தேடு..." className="pl-10" />
+                </div>
+                <div className="flex gap-2">
+                    <Link href="/dashboard-tamil">
+                        <Button variant="outline">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            பின்செல்
+                        </Button>
+                    </Link>
+                    <Link href="/diwali-scheme/new">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            புதிய பயனர்
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {diwaliSchemeUsers.map((user) => (
+              <Card key={user.id} className="flex flex-col text-center">
+                 <CardContent className="flex-1 p-6 space-y-4">
+                    <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
+                        <AvatarImage src={user.avatarUrl} alt={user.name}/>
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <h3 className="text-xl font-semibold">{user.name}</h3>
+                    <div className="space-y-1 text-sm">
+                        <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} ({user.frequency})</span></div>
+                        <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.totalSaved)}</span></div>
+                    </div>
+                 </CardContent>
+                <CardFooter className="p-4 border-t">
+                    <div className="flex justify-around w-full">
+                        <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
+                    </div>
+                </CardFooter>
+              </Card>
+            ))}
+        </div>
       </div>
     </TamilAppLayout>
   );

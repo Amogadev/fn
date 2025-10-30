@@ -143,13 +143,13 @@ export default function DashboardTamilPage() {
       </main>
 
       <footer className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden">
-        <div className="mx-auto flex h-full max-w-sm items-center justify-around rounded-2xl bg-white px-4 py-3 shadow-lg">
+        <div className="mx-auto flex h-full max-w-sm items-center justify-around rounded-full bg-white px-4 py-3 shadow-lg">
           {navItems.map((item) => (
             <Link
               href="#"
               key={item.label}
               className={cn(
-                "flex w-16 flex-col items-center justify-center text-xs",
+                "flex w-16 flex-col items-center justify-center text-center text-xs",
                 item.active ? "text-slate-800" : "text-muted-foreground"
               )}
             >

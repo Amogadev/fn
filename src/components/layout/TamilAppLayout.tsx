@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
-    { href: "#", label: "கடன் விவரங்கள்", icon: Users2 },
+    { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
     { href: "#", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
     { href: "#", label: "அமைப்புகள்", icon: Settings },
@@ -37,7 +37,18 @@ const NavLink = ({ href, label, icon: Icon, isActive }: { href: string, label: s
     </Link>
 );
 
-export function TamilAppLayout({ children }: { children: React.ReactNode }) {
+const FloatingNavItem = ({ href, label, icon: Icon, isActive }: { href: string, label: string, icon: React.ElementType, isActive: boolean}) => (
+    <Link href={href} className={cn(
+        "flex flex-col items-center justify-center gap-1 p-2 rounded-md text-xs font-medium",
+        isActive ? "text-primary" : "text-muted-foreground"
+    )}>
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
+    </Link>
+);
+
+
+export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -83,7 +94,7 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
                 {navItems.map((item) => (
                     <Link
-                        key={`${item.href}-${item.label}`}
+                        key={item.label}
                         href={item.href}
                         className={cn(
                             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
@@ -105,6 +116,15 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
             {children}
         </main>
+        {showFloatingNav && (
+            <div className="fixed bottom-0 left-0 right-0 md:hidden bg-background border-t shadow-lg z-10">
+                <div className="grid grid-cols-5 h-16">
+                    {navItems.map((item) => (
+                        <FloatingNavItem key={item.label} {...item} isActive={pathname === item.href} />
+                    ))}
+                </div>
+            </div>
+        )}
       </div>
     </div>
   );

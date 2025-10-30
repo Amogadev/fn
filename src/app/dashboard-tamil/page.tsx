@@ -14,29 +14,41 @@ import {
   UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const ActionCard = ({
   title,
   description,
   icon: Icon,
   className,
+  href,
 }: {
   title: string;
   description: string;
   icon: React.ElementType;
   className?: string;
-}) => (
-  <Card
-    className={cn(
-      "flex h-full flex-col items-center justify-center bg-card p-6 text-center hover:bg-muted/50 transition-colors",
-      className
-    )}
-  >
-    <Icon className="mb-4 h-10 w-10 text-primary" />
-    <h3 className="font-semibold text-lg">{title}</h3>
-    <p className="text-sm text-muted-foreground mt-1">{description}</p>
-  </Card>
-);
+  href?: string;
+}) => {
+  const CardContent = (
+    <Card
+      className={cn(
+        "flex h-full flex-col items-center justify-center bg-card p-6 text-center hover:bg-muted/50 transition-colors",
+        className
+      )}
+    >
+      <Icon className="mb-4 h-10 w-10 text-primary" />
+      <h3 className="font-semibold text-lg">{title}</h3>
+      <p className="text-sm text-muted-foreground mt-1">{description}</p>
+    </Card>
+  );
+
+  if (href) {
+    return <Link href={href}>{CardContent}</Link>;
+  }
+
+  return CardContent;
+};
+
 
 export default function DashboardTamilPage() {
   return (
@@ -67,6 +79,7 @@ export default function DashboardTamilPage() {
               description="ஒரு புதிய பயனரைச் சேர்க்கவும்"
               icon={UserPlus}
               className="lg:row-span-2"
+              href="/loans/new-tamil"
             />
             <Card className="flex flex-col justify-between p-6">
               <div>

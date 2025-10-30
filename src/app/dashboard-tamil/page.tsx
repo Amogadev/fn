@@ -32,6 +32,7 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const ActionCard = ({
   title,
@@ -78,12 +79,15 @@ export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
 
-  // Sample data to simulate backend
-  const [totalCashOnHand] = useState(100000); 
-  const [loanUsersCount] = useState(0);
-  const [diwaliUsersCount] = useState(0);
-  const [totalLoansGiven] = useState(0);
-  const [totalDiwaliSavings] = useState(0);
+  const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
+  const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+
+  const totalCashOnHand = 100000;
+  const loanUsersCount = loanUsers.length;
+  const diwaliUsersCount = diwaliUsers.length;
+  
+  const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
+  const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
   
   const [currentDate, setCurrentDate] = useState('');
 
@@ -94,7 +98,6 @@ export default function DashboardTamilPage() {
         year: 'numeric',
       }));
   }, []);
-
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,12 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export default function NewDiwaliSchemePage() {
   const { toast } = useToast();
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [diwaliUsers, setDiwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+  
+  const [fullName, setFullName] = useState("");
+  const [aadhaar, setAadhaar] = useState("");
+  const [contact, setContact] = useState("");
+  const [contribution, setContribution] = useState<string | undefined>();
+  const [frequency, setFrequency] = useState<string | undefined>();
 
   const getCameraPermission = async () => {
     if (!("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)) {
@@ -82,6 +92,43 @@ export default function NewDiwaliSchemePage() {
     year: 'numeric',
   });
 
+  const handleSubmit = () => {
+    if (!fullName || !contribution || !frequency) {
+        toast({
+            variant: "destructive",
+            title: "தகவல் இல்லை",
+            description: "தயவுசெய்து பெயர், பங்களிப்புத் தொகை மற்றும் கால இடைவெளியை நிரப்பவும்.",
+        });
+        return;
+    }
+
+    const newUser = {
+        id: `ds_user_${Date.now()}`,
+        name: fullName,
+        contribution: Number(contribution),
+        frequency: frequency,
+        totalSaved: Number(contribution), // Initial contribution
+        avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
+        joinDate: new Date().toISOString().split('T')[0],
+        estimatedBonus: 0, // Should be calculated later
+        transactions: [{
+            id: `txn_${Date.now()}`,
+            date: new Date().toLocaleDateString('ta-IN'),
+            description: "ஆரம்ப பங்களிப்பு",
+            amount: Number(contribution),
+        }]
+    };
+    
+    setDiwaliUsers([...diwaliUsers, newUser]);
+
+    toast({
+        title: "பயனர் சேர்க்கப்பட்டார்!",
+        description: `${fullName} தீபாவளி சிட் திட்டத்தில் சேர்க்கப்பட்டார்.`,
+    });
+
+    router.push("/diwali-scheme/users-tamil");
+  };
+
 
   return (
     <TamilAppLayout showFloatingNav>
@@ -127,16 +174,16 @@ export default function NewDiwaliSchemePage() {
                   <div className="lg:col-span-2 space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="full-name">முழு பெயர்</Label>
-                      <Input id="full-name" placeholder="எ.கா., பிரியா" />
+                      <Input id="full-name" placeholder="எ.கா., பிரியா" value={fullName} onChange={(e) => setFullName(e.target.value)} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
-                            <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" />
+                            <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
-                            <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" />
+                            <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} />
                         </div>
                     </div>
                   </div>
@@ -196,7 +243,7 @@ export default function NewDiwaliSchemePage() {
                 <CardContent className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label>பங்களிப்புத் தொகை</Label>
-                        <Select>
+                        <Select value={contribution} onValueChange={setContribution}>
                             <SelectTrigger>
                                 <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
                             </SelectTrigger>
@@ -209,7 +256,7 @@ export default function NewDiwaliSchemePage() {
                     </div>
                     <div className="space-y-2">
                         <Label>கால இடைவெளி</Label>
-                        <Select>
+                        <Select value={frequency} onValueChange={setFrequency}>
                             <SelectTrigger>
                                 <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
                             </SelectTrigger>
@@ -242,7 +289,7 @@ export default function NewDiwaliSchemePage() {
                 </CardContent>
             </Card>
 
-            <Button className="w-full">பதிவு செய்து அடுத்து செல்லவும்</Button>
+            <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
         </div>
 
       </div>

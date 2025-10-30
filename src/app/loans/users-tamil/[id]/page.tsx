@@ -1,3 +1,4 @@
+"use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -5,23 +6,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-
-const loanUser = {
-    id: "user_001",
-    name: "பயனர்",
-    loanAmount: 0,
-    paidAmount: 0,
-    status: "கடன் இல்லை",
-    avatarUrl: "https://picsum.photos/seed/101/100/100",
-    joinDate: new Date().toISOString().split('T')[0],
-    transactions: []
-};
+import { notFound } from "next/navigation";
 
 
 export default function LoanUserDetailPage({ params }: { params: { id: string } }) {
-    const user = loanUser; // In a real app, you would fetch user by params.id
+    const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
+    const user = loanUsers.find(u => u.id === params.id);
+
+    if (!user) {
+        return notFound();
+    }
+
     const balance = user.loanAmount - user.paidAmount;
 
     return (
@@ -89,12 +87,12 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                                     <TableRow>
                                         <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
                                     </TableRow>
-                                ) : user.transactions.map((tx) => (
+                                ) : user.transactions.map((tx: any) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>
                                         <TableCell className={`text-right font-medium ${tx.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                                            {tx.type === 'credit' ? '+' : '-'} {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(Math.abs(tx.amount))}
+                                            {tx.type === 'credit' ? '+' : ''} {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(tx.amount)}
                                         </TableCell>
                                     </TableRow>
                                 ))}

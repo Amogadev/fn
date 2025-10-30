@@ -12,7 +12,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,14 +25,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-
-const initialLoanUsers = [];
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 
 export default function LoanUsersPage() {
     const { toast } = useToast();
     const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    const [loanUsers, setLoanUsers] = useState(initialLoanUsers);
+    const [loanUsers, setLoanUsers] = useLocalStorage<any[]>("loan-users", []);
 
     const handleDeleteUser = (userId: string) => {
         setLoanUsers(prevUsers => prevUsers.filter(user => user.id !== userId));

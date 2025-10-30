@@ -1,3 +1,4 @@
+"use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -5,23 +6,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { ArrowLeft, Gift } from "lucide-react";
 import Link from "next/link";
-
-const diwaliUser = {
-    id: "ds_user_001",
-    name: "பயனர்",
-    contribution: 0,
-    frequency: "மாதாந்திர",
-    totalSaved: 0,
-    avatarUrl: "https://picsum.photos/seed/201/100/100",
-    joinDate: "2024-06-01",
-    estimatedBonus: 0,
-    transactions: []
-};
+import { notFound } from "next/navigation";
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
-    const user = diwaliUser; // In a real app, you would fetch user by params.id
+    const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+    const user = diwaliUsers.find(u => u.id === params.id);
+
+    if (!user) {
+        // You can render a "not found" state or redirect
+        return notFound();
+    }
+
     const estimatedDiwaliAmount = user.totalSaved + user.estimatedBonus;
 
     return (
@@ -52,7 +50,7 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                     <CardContent className="grid gap-6 md:grid-cols-3">
                          <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">பங்களிப்பு</p>
-                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} / {user.frequency}</p>
+                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} / {user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'}</p>
                         </div>
                         <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
@@ -83,7 +81,7 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                                     <TableRow>
                                         <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
                                     </TableRow>
-                                ) : user.transactions.map((tx) => (
+                                ) : user.transactions.map((tx: any) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>

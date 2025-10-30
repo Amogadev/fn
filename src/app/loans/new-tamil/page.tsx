@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,18 +23,27 @@ import {
 } from "@/components/ui/alert";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export default function NewLoanTamilPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
   >(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [loanUsers, setLoanUsers] = useLocalStorage<any[]>("loan-users", []);
+
+  // Form state
+  const [fullName, setFullName] = useState("");
+  const [contact, setContact] = useState("");
+  const [idProof, setIdProof] = useState("");
   const [loanAmount, setLoanAmount] = useState(0);
+  const [loanType, setLoanType] = useState("normal");
+  const [frequency, setFrequency] = useState("monthly");
 
   useEffect(() => {
-    // This empty effect can be used for camera cleanup if needed in the future
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
@@ -83,7 +93,6 @@ export default function NewLoanTamilPage() {
       const dataUri = canvas.toDataURL("image/jpeg");
       setCapturedImage(dataUri);
 
-      // Stop camera stream
       if (videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
@@ -105,6 +114,43 @@ export default function NewLoanTamilPage() {
       setLoanAmount(prev => Math.max(prev - 1000, 0));
   }
 
+  const handleSubmit = () => {
+    if (!fullName || loanAmount <= 0) {
+        toast({
+            variant: "destructive",
+            title: "தகவல் இல்லை",
+            description: "தயவுசெய்து முழு பெயர் மற்றும் சரியான கடன் தொகையை உள்ளிடவும்.",
+        });
+        return;
+    }
+
+    const newUser = {
+        id: `user_${Date.now()}`,
+        name: fullName,
+        loanAmount: loanAmount,
+        paidAmount: 0,
+        status: "செயலில்", // Active
+        avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
+        joinDate: new Date().toISOString().split('T')[0],
+        transactions: [{
+            id: `txn_${Date.now()}`,
+            date: new Date().toLocaleDateString('ta-IN'),
+            description: "கடன் வழங்கப்பட்டது",
+            type: 'debit',
+            amount: -loanAmount,
+        }]
+    };
+    
+    setLoanUsers([...loanUsers, newUser]);
+
+    toast({
+        title: "பயனர் சேர்க்கப்பட்டார்!",
+        description: `${fullName} கடன் பயனராக சேர்க்கப்பட்டார்.`,
+    });
+
+    router.push("/loans/users-tamil");
+  };
+
 
   return (
     <TamilAppLayout showFloatingNav={false}>
@@ -118,7 +164,7 @@ export default function NewLoanTamilPage() {
                     புதிய பயனரைச் சேர்த்து உடனடியாக கடன் விண்ணப்பத்தை முடிக்கவும்.
                 </p>
             </div>
-            <Link href="/dashboard-tamil">
+            <Link href="/loans/users-tamil">
                 <Button variant="outline">
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     பயனர்கள் பக்கத்திற்குத் திரும்பு
@@ -141,20 +187,21 @@ export default function NewLoanTamilPage() {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="full-name">முழு பெயர்</Label>
-                      <Input id="full-name" placeholder="எ.கா., விராட்" />
+                      <Input id="full-name" placeholder="எ.கா., விராட்" value={fullName} onChange={(e) => setFullName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contact-number">தொடர்பு எண்</Label>
                       <Input
                         id="contact-number"
                         placeholder="எ.கா., +91 98765 43210"
+                        value={contact} onChange={(e) => setContact(e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="aadhaar-number">
                         அடையாளச் சான்று (ஆதார்)
                       </Label>
-                      <Input id="aadhaar-number" placeholder="எ.கா., ஆதார் எண்" />
+                      <Input id="aadhaar-number" placeholder="எ.கா., ஆதார் எண்" value={idProof} onChange={(e) => setIdProof(e.target.value)}/>
                     </div>
                   </CardContent>
                 </Card>
@@ -240,7 +287,7 @@ export default function NewLoanTamilPage() {
                         </div>
                         <div className="space-y-2">
                             <Label>கடன் வகை</Label>
-                            <RadioGroup defaultValue="normal" className="grid grid-cols-2 gap-4">
+                            <RadioGroup value={loanType} onValueChange={setLoanType} className="grid grid-cols-2 gap-4">
                                 <Label className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
                                     <RadioGroupItem value="normal" id="normal" className="sr-only" />
                                     <p className="font-semibold">சாதாரண கடன்</p>
@@ -255,11 +302,11 @@ export default function NewLoanTamilPage() {
                         </div>
                         <div className="space-y-2">
                             <Label>செலுத்தும் கால இடைவெளி</Label>
-                            <RadioGroup defaultValue="monthly" className="grid grid-cols-4 gap-2">
-                                {["தினசரி", "வாராந்திர", "மாதாந்திர", "வருடாந்திர"].map(freq => (
-                                    <Label key={freq} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
-                                        <RadioGroupItem value={freq} id={freq} className="sr-only" />
-                                        {freq}
+                            <RadioGroup value={frequency} onValueChange={setFrequency} className="grid grid-cols-4 gap-2">
+                                {[{id: 'daily', label: "தினசரி"}, {id: 'weekly', label: "வாராந்திர"}, {id: 'monthly', label: "மாதாந்திர"}, {id: 'yearly', label: "வருடாந்திர"}].map(freq => (
+                                    <Label key={freq.id} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
+                                        <RadioGroupItem value={freq.id} id={freq.id} className="sr-only" />
+                                        {freq.label}
                                     </Label>
                                 ))}
                             </RadioGroup>
@@ -297,7 +344,7 @@ export default function NewLoanTamilPage() {
             </div>
         </div>
 
-        <Button className="w-full lg:w-1/2 mx-auto">
+        <Button className="w-full lg:w-1/2 mx-auto" onClick={handleSubmit}>
             பயனரை உருவாக்கி கடன் விண்ணப்பத்தை சமர்ப்பிக்கவும்
         </Button>
       </div>

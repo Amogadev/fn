@@ -22,15 +22,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
-const initialDiwaliSchemeUsers = [];
 
 export default function DiwaliSchemeUsersPage() {
   const { toast } = useToast();
   const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  const [diwaliSchemeUsers, setDiwaliSchemeUsers] = useState(initialDiwaliSchemeUsers);
+  const [diwaliSchemeUsers, setDiwaliSchemeUsers] = useLocalStorage<any[]>("diwali-users", []);
   
   const handleDeleteUser = (userId: string) => {
     setDiwaliSchemeUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
@@ -98,7 +98,7 @@ export default function DiwaliSchemeUsersPage() {
                     </Avatar>
                     <h3 className="text-xl font-semibold">{user.name}</h3>
                     <div className="space-y-1 text-sm">
-                        <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} ({user.frequency})</span></div>
+                        <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} ({user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'})</span></div>
                         <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.totalSaved)}</span></div>
                     </div>
                  </CardContent>

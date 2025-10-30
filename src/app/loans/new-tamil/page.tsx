@@ -288,12 +288,12 @@ export default function NewLoanTamilPage() {
                         <RadioGroup value={loanType} onValueChange={setLoanType} className="space-y-2">
                             <Label>கடன் வகை</Label>
                             <div className="grid grid-cols-2 gap-4">
-                                <Label htmlFor="normal" className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
+                                <Label htmlFor="normal" className="flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
                                     <RadioGroupItem value="normal" id="normal" className="sr-only" />
                                     <p className="font-semibold">சாதாரண கடன்</p>
                                     <p className="text-sm text-muted-foreground">(10% வட்டி)</p>
                                 </Label>
-                                <Label htmlFor="emi" className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
+                                <Label htmlFor="emi" className="flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
                                     <RadioGroupItem value="emi" id="emi" className="sr-only" />
                                     <p className="font-semibold">EMI</p>
                                     <p className="text-sm text-muted-foreground">(12% வட்டி)</p>
@@ -304,7 +304,7 @@ export default function NewLoanTamilPage() {
                             <Label>செலுத்தும் கால இடைவெளி</Label>
                             <div className="grid grid-cols-4 gap-2">
                                 {[{id: 'daily', label: "தினசரி"}, {id: 'weekly', label: "வாராந்திர"}, {id: 'monthly', label: "மாதாந்திர"}, {id: 'yearly', label: "வருடாந்திர"}].map(freq => (
-                                    <Label key={freq.id} htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
+                                    <Label key={freq.id} htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md cursor-pointer text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
                                         <RadioGroupItem value={freq.id} id={freq.id} className="sr-only" />
                                         {freq.label}
                                     </Label>

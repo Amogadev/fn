@@ -26,10 +26,10 @@ import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
+  email: z.string().email({ message: "தவறான மின்னஞ்சல் முகவரி." }),
   password: z
     .string()
-    .min(1, { message: "Password is required." }),
+    .min(1, { message: "கடவுச்சொல் தேவை." }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -50,14 +50,14 @@ export default function LoginPage() {
   const onSubmit = (data: LoginFormValues) => {
     if (data.email === "login@example.com" && data.password === "12345") {
       toast({
-        title: "Login Successful",
-        description: "Redirecting to your dashboard...",
+        title: "வெற்றிகரமாக உள்நுழைந்துள்ளீர்கள்",
+        description: "உங்கள் டாஷ்போர்டுக்கு திருப்பி விடப்படுகிறீர்கள்...",
       });
       router.push("/dashboard-tamil");
     } else {
       toast({
-        title: "Invalid Credentials",
-        description: "Please check your email and password.",
+        title: "தவறான நற்சான்றிதழ்கள்",
+        description: "உங்கள் மின்னஞ்சல் மற்றும் கடவுச்சொல்லை சரிபார்க்கவும்.",
         variant: "destructive",
       });
     }

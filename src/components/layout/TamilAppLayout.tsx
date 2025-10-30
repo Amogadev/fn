@@ -10,7 +10,6 @@ import {
     Settings,
     ShieldCheck,
 } from "lucide-react";
-import { Button } from "../ui/button";
 import {
   SidebarProvider,
   Sidebar,
@@ -31,11 +30,11 @@ const navItems = [
     { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
-export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
+export function TamilAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
         <Sidebar>
             <SidebarHeader>
                  <Link href="/" className="flex items-center gap-2 font-semibold">

@@ -79,7 +79,7 @@ export default function DashboardTamilPage() {
         </nav>
       </header>
 
-      <main className="space-y-8 p-6 pb-24 md:pb-8">
+      <main className="space-y-8 p-6">
         <Card className="bg-[#2d3748] text-white">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>

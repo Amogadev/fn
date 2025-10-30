@@ -3,29 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarFooter,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
     LayoutGrid,
     Users2,
     Gift,
     BarChart,
     Settings,
-  LogOut,
-  ShieldCheck,
+    ShieldCheck,
+    Menu,
 } from "lucide-react";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "../ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
@@ -35,70 +27,85 @@ const navItems = [
     { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
+const NavLink = ({ href, label, icon: Icon, isActive }: { href: string, label: string, icon: React.ElementType, isActive: boolean}) => (
+    <Link href={href} className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+        isActive && "text-primary bg-muted"
+    )}>
+        <Icon className="h-4 w-4" />
+        {label}
+    </Link>
+);
+
 export function TamilAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const avatarImage = PlaceHolderImages.find((img) => img.id === "user-avatar");
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary text-primary-foreground">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h1 className="text-xl font-bold font-headline">வைப்புத்தொகை 360</h1>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <Link href={item.href} legacyBehavior passHref>
-                  <SidebarMenuButton
-                    isActive={pathname === item.href}
-                    tooltip={item.label}
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter className="p-4 border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="w-8 h-8">
-                {avatarImage && (
-                  <AvatarImage
-                    src={avatarImage.imageUrl}
-                    alt={avatarImage.description}
-                  />
-                )}
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-medium">Admin User</span>
-            </div>
-            <Link href="/" legacyBehavior passHref>
-              <Button variant="ghost" size="icon" asChild>
-                <a><LogOut className="w-5 h-5" /></a>
-              </Button>
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <div className="hidden border-r bg-muted/40 md:block">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              <ShieldCheck className="h-6 w-6 text-primary" />
+              <span className="font-headline">வைப்புத்தொகை 360</span>
             </Link>
           </div>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex items-center justify-between p-4 bg-card/80 backdrop-blur-sm md:hidden">
-          <div className="flex items-center gap-2">
-             <ShieldCheck className="w-6 h-6 text-primary" />
-             <h1 className="text-lg font-bold font-headline">வைப்புத்தொகை 360</h1>
+          <div className="flex-1">
+            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+              {navItems.map((item) => (
+                <NavLink key={item.href} {...item} isActive={pathname === item.href} />
+              ))}
+            </nav>
           </div>
-          <SidebarTrigger />
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 md:hidden">
+           <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0 md:hidden"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col">
+              <nav className="grid gap-2 text-lg font-medium">
+                <Link
+                  href="#"
+                  className="flex items-center gap-2 text-lg font-semibold mb-4"
+                >
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                  <span className="sr-only">வைப்புத்தொகை 360</span>
+                </Link>
+                {navItems.map((item) => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                            "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                            pathname === item.href && "bg-muted text-foreground"
+                        )}
+                    >
+                        <item.icon className="h-5 w-5" />
+                        {item.label}
+                    </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+           <div className="flex items-center gap-2 font-semibold md:hidden">
+              <ShieldCheck className="h-6 w-6 text-primary" />
+              <span className="font-headline">வைப்புத்தொகை 360</span>
+            </div>
         </header>
-        <main className="flex-1 p-4 md:p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
+            {children}
+        </main>
+      </div>
+    </div>
   );
 }

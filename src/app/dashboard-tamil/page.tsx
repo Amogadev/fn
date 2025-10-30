@@ -28,101 +28,100 @@ const ActionCard = ({
 }) => (
   <Card
     className={cn(
-      "flex h-full flex-col items-center justify-center bg-gray-50 p-6 text-center hover:bg-gray-100",
+      "flex h-full flex-col items-center justify-center bg-card p-6 text-center hover:bg-muted/50 transition-colors",
       className
     )}
   >
-    <Icon className="mb-2 h-8 w-8 text-gray-600" />
-    <h3 className="font-semibold">{title}</h3>
-    <p className="text-sm text-muted-foreground">{description}</p>
+    <Icon className="mb-4 h-10 w-10 text-primary" />
+    <h3 className="font-semibold text-lg">{title}</h3>
+    <p className="text-sm text-muted-foreground mt-1">{description}</p>
   </Card>
 );
 
 export default function DashboardTamilPage() {
   return (
     <TamilAppLayout>
-      <div className="min-h-screen bg-gray-50 font-body">
-        <main className="space-y-8 p-6">
-          <Card className="bg-[#2d3748] text-white">
+      <div className="space-y-8">
+        <header className="space-y-1.5">
+          <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
+          <p className="text-muted-foreground">30 அக்டோபர், 2025</p>
+        </header>
+          
+        <Card className="bg-primary text-primary-foreground">
             <CardHeader className="flex flex-row items-start justify-between">
               <div>
-                <CardTitle className="text-sm font-normal">
+                <CardTitle className="text-sm font-medium">
                   மொத்த கை இருப்பு
                 </CardTitle>
                 <p className="text-4xl font-bold">₹73,000</p>
               </div>
               <Copy className="cursor-pointer" />
             </CardHeader>
-          </Card>
+        </Card>
 
-          <section>
-            <h2 className="mb-4 text-lg font-semibold">கடன்</h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <ActionCard
-                title="புதிய கடன் பதிவு"
-                description="ஒரு புதிய பயனரைச் சேர்க்கவும்"
-                icon={UserPlus}
-                className="md:row-span-2"
-              />
-              <Card className="flex items-center justify-between p-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    வழங்கப்பட்ட மொத்தக் கடன்கள்
-                  </p>
-                  <p className="text-2xl font-bold">₹30,000</p>
-                  <p className="text-xs text-muted-foreground">
-                    வழங்கப்பட்ட அசல் தொகை
-                  </p>
-                </div>
-                <div className="text-3xl font-bold text-gray-300">₹</div>
-              </Card>
-              <Card className="flex items-center justify-between p-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    மொத்த கடன் பயனர்கள்
-                  </p>
-                  <p className="text-2xl font-bold">3</p>
-                  <p className="text-xs text-muted-foreground">
-                    கடன் பெற்ற பயனர்கள்
-                  </p>
-                </div>
-                <Users2 className="h-8 w-8 text-gray-300" />
-              </Card>
-            </div>
-          </section>
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 font-headline">கடன்</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <ActionCard
+              title="புதிய கடன் பதிவு"
+              description="ஒரு புதிய பயனரைச் சேர்க்கவும்"
+              icon={UserPlus}
+              className="lg:row-span-2"
+            />
+            <Card className="flex flex-col justify-between p-6">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  வழங்கப்பட்ட மொத்தக் கடன்கள்
+                </p>
+                <p className="text-3xl font-bold">₹30,000</p>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                வழங்கப்பட்ட அசல் தொகை
+              </p>
+            </Card>
+            <Card className="flex flex-col justify-between p-6">
+               <div>
+                <p className="text-sm text-muted-foreground">
+                  மொத்த கடன் பயனர்கள்
+                </p>
+                <p className="text-3xl font-bold">3</p>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                கடன் பெற்ற பயனர்கள்
+              </p>
+            </Card>
+          </div>
+        </section>
 
-          <section>
-            <h2 className="mb-4 text-lg font-semibold">தீபாவளி சேமிப்புத் திட்டம்</h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <ActionCard
-                title="தீபாவளி சேமிப்புத் திட்டத்தில் சேரவும்"
-                description="சேமித்து பண்டிகை போனஸ் பெறுங்கள்"
-                icon={Gift}
-                className="md:row-span-2"
-              />
-              <Card className="flex items-center justify-between p-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
-                  <p className="text-2xl font-bold">₹1,000</p>
-                  <p className="text-xs text-muted-foreground">பயனர்கள் சேமித்தவை</p>
-                </div>
-                <Gift className="h-8 w-8 text-gray-300" />
-              </Card>
-              <Card className="flex items-center justify-between p-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    சேமிப்புத் திட்ட பயனர்கள்
-                  </p>
-                  <p className="text-2xl font-bold">1</p>
-                  <p className="text-xs text-muted-foreground">
-                    திட்டத்தில் பங்கேற்கும் பயனர்கள்
-                  </p>
-                </div>
-                <Users2 className="h-8 w-8 text-gray-300" />
-              </Card>
-            </div>
-          </section>
-        </main>
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 font-headline">தீபாவளி சேமிப்புத் திட்டம்</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <ActionCard
+              title="திட்டத்தில் சேரவும்"
+              description="சேமித்து பண்டிகை போனஸ் பெறுங்கள்"
+              icon={Gift}
+              className="lg:row-span-2"
+            />
+            <Card className="flex flex-col justify-between p-6">
+              <div>
+                <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
+                <p className="text-3xl font-bold">₹1,000</p>
+              </div>
+               <p className="text-xs text-muted-foreground mt-2">பயனர்கள் சேமித்தவை</p>
+            </Card>
+            <Card className="flex flex-col justify-between p-6">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  சேமிப்புத் திட்ட பயனர்கள்
+                </p>
+                <p className="text-3xl font-bold">1</p>
+              </div>
+               <p className="text-xs text-muted-foreground mt-2">
+                திட்டத்தில் பங்கேற்கும் பயனர்கள்
+              </p>
+            </Card>
+          </div>
+        </section>
       </div>
     </TamilAppLayout>
   );

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -14,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Camera, Info } from "lucide-react";
+import { ArrowLeft, Camera, Info, User } from "lucide-react";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -162,74 +163,82 @@ export default function NewDiwaliSchemePage() {
             <p className="text-lg font-semibold text-primary">படி 1: பயனர் பதிவு</p>
             <p className="text-muted-foreground">சரிபார்ப்புக்காக உங்கள் தகவலை வழங்கவும்.</p>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>உங்கள் விவரங்கள்</CardTitle>
-                <CardDescription>
-                  தயவுசெய்து உங்கள் தகவலை அளித்து, சரிபார்ப்புக்காக ஒரு புகைப்படத்தைப் பிடிக்கவும்.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-8 lg:grid-cols-3">
-                  <div className="lg:col-span-2 space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="full-name">முழு பெயர்</Label>
-                      <Input id="full-name" placeholder="எ.கா., பிரியா" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
-                            <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
-                            <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} />
-                        </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                     <Label>முகப் புகைப்படம்</Label>
-                     <div className="w-full bg-muted rounded-lg flex items-center justify-center overflow-hidden aspect-square">
-                      {capturedImage ? (
-                        <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
-                      ) : hasCameraPermission === true ? (
-                         <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
-                      ) : (
-                        <div className="text-center text-muted-foreground p-4">
-                            <Camera className="mx-auto h-16 w-16" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    {hasCameraPermission === true && !capturedImage && (
-                        <Button onClick={captureImage} className="w-full">புகைப்படம் எடு</Button>
-                    )}
-
-                    {hasCameraPermission === false && (
-                        <Alert variant="destructive">
-                          <AlertTitle>கேமரா அணுகல் தேவை</AlertTitle>
-                          <AlertDescription>
-                            இந்த அம்சத்தைப் பயன்படுத்த, கேமரா அணுகலை அனுமதிக்கவும்.
-                          </AlertDescription>
-                        </Alert>
-                    )}
-
-                    {!capturedImage && hasCameraPermission !== true && (
-                        <Button onClick={getCameraPermission} className="w-full">
-                            <Camera className="w-4 h-4 mr-2" />
-                            கேமராவைத் திற
-                        </Button>
-                    )}
-                     {capturedImage && (
-                        <Button onClick={() => { setCapturedImage(null); getCameraPermission(); }} className="w-full">
-                            <Camera className="w-4 h-4 mr-2" />
-                            மீண்டும் எடு
-                        </Button>
-                    )}
-                  </div>
+             <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>உங்கள் விவரங்கள்</CardTitle>
+                            <CardDescription>
+                            தயவுசெய்து உங்கள் தகவலை அளித்து, சரிபார்ப்புக்காக ஒரு புகைப்படத்தைப் பிடிக்கவும்.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="full-name">முழு பெயர்</Label>
+                                <Input id="full-name" placeholder="எ.கா., பிரியா" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
+                                    <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
+                                    <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-              </CardContent>
-            </Card>
+                 <div className="space-y-4">
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>முகப் புகைப்படம் (விருப்பத்தேர்வு)</CardTitle>
+                            <CardDescription>ஒரு தெளிவான படத்தைப் பிடிக்கவும்</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col items-center justify-center space-y-4">
+                             <div className="w-40 h-40 bg-muted rounded-lg flex items-center justify-center overflow-hidden">
+                                {capturedImage ? (
+                                    <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
+                                ) : hasCameraPermission === true ? (
+                                    <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
+                                ) : (
+                                    <div className="text-center text-muted-foreground p-4">
+                                        <User className="mx-auto h-12 w-12" />
+                                        <p className="text-sm">படம் இல்லை</p>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {hasCameraPermission === true && !capturedImage && (
+                                <Button onClick={captureImage} className="w-full">புகைப்படம் எடு</Button>
+                            )}
+
+                            {hasCameraPermission === false && (
+                                <Alert variant="destructive">
+                                <AlertTitle>கேமரா அணுகல் தேவை</AlertTitle>
+                                <AlertDescription>
+                                    இந்த அம்சத்தைப் பயன்படுத்த, கேமரா அணுகலை அனுமதிக்கவும்.
+                                </AlertDescription>
+                                </Alert>
+                            )}
+
+                            {!capturedImage && hasCameraPermission !== true && (
+                                <Button onClick={getCameraPermission} className="w-full">
+                                    <Camera className="w-4 h-4 mr-2" />
+                                    கேமராவைத் திற
+                                </Button>
+                            )}
+                            {capturedImage && (
+                                <Button onClick={() => { setCapturedImage(null); getCameraPermission(); }} className="w-full">
+                                    <Camera className="w-4 h-4 mr-2" />
+                                    மீண்டும் எடு
+                                </Button>
+                            )}
+                        </CardContent>
+                     </Card>
+                  </div>
+            </div>
         </div>
 
         <div className="space-y-4">

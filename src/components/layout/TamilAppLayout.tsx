@@ -39,12 +39,12 @@ import { Button } from "../ui/button";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
-    { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
-    { href: "/diwali-scheme/new", label: "தீபாவளி சிட்", icon: Gift },
+    { href: "/loans/users-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
+    { href: "/diwali-scheme/users-tamil", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
 ];
 
-export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
+export function TamilAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
@@ -70,7 +70,7 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
                          <SidebarMenuItem key={`${item.href}-${item.label}`}>
                              <Link href={item.href}>
                                 <SidebarMenuButton
-                                    isActive={pathname === item.href}
+                                    isActive={pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard-tamil')}
                                     tooltip={item.label}
                                 >
                                     <item.icon />

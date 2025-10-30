@@ -72,17 +72,17 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
                 {children}
                 {showFloatingNav && (
                     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
-                        <div className="bg-background/80 backdrop-blur-sm p-2 rounded-full border shadow-lg">
+                        <div className="bg-background/80 backdrop-blur-sm p-3 rounded-full border shadow-lg">
                             <nav className="flex items-center gap-2">
                                 {navItems.map((item) => (
                                     <Link key={item.label} href={item.href}>
                                         <SidebarMenuButton
                                             isActive={pathname === item.href}
                                             tooltip={item.label}
-                                            className="!w-12 !h-12 !p-0 rounded-full flex-col !gap-0.5 text-xs"
+                                            className="!w-16 !h-16 !p-0 rounded-full flex-col !gap-1 text-xs"
                                         >
-                                            <item.icon className="h-5 w-5" />
-                                            <span className="!text-[10px] group-data-[collapsible=icon]:hidden">{item.label}</span>
+                                            <item.icon className="h-6 w-6" />
+                                            <span className="!text-[12px] group-data-[collapsible=icon]:hidden">{item.label}</span>
                                         </SidebarMenuButton>
                                     </Link>
                                 ))}

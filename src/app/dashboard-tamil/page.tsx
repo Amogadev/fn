@@ -81,24 +81,43 @@ export default function DashboardTamilPage() {
 
   const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
   const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+  
+  const [dashboardData, setDashboardData] = useState({
+      totalCashOnHand: 0,
+      totalLoansGiven: 0,
+      loanUsersCount: 0,
+      totalDiwaliSavings: 0,
+      diwaliUsersCount: 0,
+  });
 
-  const initialVaultBalance = 100000;
-  const loanUsersCount = loanUsers.length;
-  const diwaliUsersCount = diwaliUsers.length;
-  
-  const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
-  const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
-  const totalCashOnHand = initialVaultBalance - totalLoansGiven;
-  
   const [currentDate, setCurrentDate] = useState('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     setCurrentDate(new Date().toLocaleDateString('ta-IN', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }));
-  }, []);
+
+    const initialVaultBalance = 100000;
+    const loanUsersCount = loanUsers.length;
+    const diwaliUsersCount = diwaliUsers.length;
+  
+    const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
+    const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
+    const totalCashOnHand = initialVaultBalance - totalLoansGiven;
+    
+    setDashboardData({
+        totalCashOnHand,
+        totalLoansGiven,
+        loanUsersCount,
+        totalDiwaliSavings,
+        diwaliUsersCount,
+    })
+
+  }, [loanUsers, diwaliUsers]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -166,7 +185,11 @@ export default function DashboardTamilPage() {
                 <CardTitle className="text-sm font-medium">
                   மொத்த கை இருப்பு
                 </CardTitle>
-                <p className="text-4xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(totalCashOnHand)}</p>
+                 {isClient ? (
+                    <p className="text-4xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalCashOnHand)}</p>
+                 ) : (
+                    <p className="text-4xl font-bold">₹...</p>
+                 )}
               </div>
               <Copy className="cursor-pointer" />
             </CardHeader>
@@ -187,7 +210,11 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   வழங்கப்பட்ட மொத்தக் கடன்கள்
                 </p>
-                <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(totalLoansGiven)}</p>
+                 {isClient ? (
+                    <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalLoansGiven)}</p>
+                 ) : (
+                    <p className="text-3xl font-bold">₹...</p>
+                 )}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 வழங்கப்பட்ட அசல் தொகை
@@ -198,7 +225,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   மொத்த கடன் பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">{loanUsersCount}</p>
+                <p className="text-3xl font-bold">{isClient ? dashboardData.loanUsersCount : '...'}</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 கடன் பெற்ற பயனர்கள்
@@ -220,7 +247,11 @@ export default function DashboardTamilPage() {
             <Card className="flex flex-col justify-between p-6">
               <div>
                 <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
-                <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(totalDiwaliSavings)}</p>
+                {isClient ? (
+                    <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalDiwaliSavings)}</p>
+                ) : (
+                    <p className="text-3xl font-bold">₹...</p>
+                )}
               </div>
                <p className="text-xs text-muted-foreground mt-2">பயனர்கள் சேமித்தவை</p>
             </Card>
@@ -229,7 +260,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   சேமிப்புத் திட்ட பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">{diwaliUsersCount}</p>
+                <p className="text-3xl font-bold">{isClient ? dashboardData.diwaliUsersCount : '...'}</p>
               </div>
                <p className="text-xs text-muted-foreground mt-2">
                 திட்டத்தில் பங்கேற்கும் பயனர்கள்

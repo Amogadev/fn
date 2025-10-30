@@ -12,17 +12,9 @@ import {
   Users2,
   Gift,
   UserPlus,
-  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 
 const ActionCard = ({
   title,
@@ -59,24 +51,21 @@ const ActionCard = ({
 
 
 export default function DashboardTamilPage() {
+  const currentDate = new Date().toLocaleDateString('ta-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
   return (
     <TamilAppLayout>
       <div className="space-y-8">
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <span>Today</span>
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Today</DropdownMenuItem>
-              <DropdownMenuItem>This Month</DropdownMenuItem>
-              <DropdownMenuItem>This Year</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="text-right">
+            <p className="text-lg font-semibold">{currentDate.split(' ')[1]} {currentDate.split(' ')[0]}, {currentDate.split(' ')[2]}</p>
+            <p className="text-sm text-muted-foreground">Today</p>
+          </div>
         </header>
           
         <Card className="bg-primary text-primary-foreground">

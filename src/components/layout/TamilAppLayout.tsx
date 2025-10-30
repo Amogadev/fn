@@ -115,10 +115,8 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
         </Sidebar>
         <SidebarInset>
              <header className="flex items-center justify-between p-4 border-b bg-muted/40 md:hidden">
-                <SidebarTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <PanelLeft />
-                    </Button>
+                <SidebarTrigger>
+                    <PanelLeft />
                 </SidebarTrigger>
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                     <ShieldCheck className="h-6 w-6 text-primary" />

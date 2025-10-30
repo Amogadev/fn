@@ -42,22 +42,29 @@ export default function LoginPage() {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "admin@example.com",
+      email: "login@example.com",
       password: "",
     },
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    // Mock login logic
-    toast({
-      title: "Login Successful",
-      description: "Redirecting to your dashboard...",
-    });
-    router.push("/dashboard");
+    if (data.email === "login@example.com" && data.password === "12345") {
+      toast({
+        title: "Login Successful",
+        description: "Redirecting to your dashboard...",
+      });
+      router.push("/dashboard-tamil");
+    } else {
+      toast({
+        title: "Invalid Credentials",
+        description: "Please check your email and password.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted/30">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-sm mx-auto shadow-xl">
         <CardHeader className="space-y-2 text-center">
             <div className="flex items-center justify-center gap-2">
@@ -84,7 +91,7 @@ export default function LoginPage() {
                     <FormLabel>மின்னஞ்சல்</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="admin@example.com"
+                        placeholder="login@example.com"
                         type="email"
                         {...field}
                       />

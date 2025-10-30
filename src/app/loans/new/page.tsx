@@ -74,9 +74,7 @@ export default function NewLoanPage() {
                   <SelectValue placeholder="Select a registered user" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user1">Aarav Patel</SelectItem>
-                  <SelectItem value="user2">Priya Sharma</SelectItem>
-                  <SelectItem value="user3">Rohan Mehta</SelectItem>
+                  {/* No users by default */}
                 </SelectContent>
               </Select>
             </div>

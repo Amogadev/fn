@@ -19,19 +19,9 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const users = [
-    { id: 'usr_001', name: 'Aarav Patel', joined: '2024-07-15', loans: 1 },
-    { id: 'usr_002', name: 'Priya Sharma', joined: '2024-06-20', loans: 1 },
-    { id: 'usr_003', name: 'Rohan Mehta', joined: '2024-07-01', loans: 1 },
-    { id: 'usr_004', name: 'Sneha Reddy', joined: '2024-05-10', loans: 1 },
-    { id: 'usr_005', name: 'Vikram Singh', joined: '2024-07-18', loans: 1 },
-];
+const users = [];
 
-const transactions = [
-    { id: "txn_001", user: "Aarav Patel", amount: "₹10,000", type: "Loan", status: "Active", date: "2024-07-15" },
-    { id: "txn_002", user: "Priya Sharma", amount: "₹5,000", type: "EMI", status: "Repaid", date: "2024-06-20" },
-    { id: "txn_003", user: "Rohan Mehta", amount: "₹25,000", type: "Loan", status: "Active", date: "2024-07-01" },
-];
+const transactions = [];
 
 export default function AdminPage() {
   return (
@@ -70,7 +60,11 @@ export default function AdminPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map(user => (
+                    {users.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={4} className="text-center">No users found.</TableCell>
+                        </TableRow>
+                    ) : users.map(user => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>{user.joined}</TableCell>
@@ -103,7 +97,11 @@ export default function AdminPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transactions.map(txn => (
+                    {transactions.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={4} className="text-center">No transactions found.</TableCell>
+                        </TableRow>
+                    ) : transactions.map(txn => (
                       <TableRow key={txn.id}>
                         <TableCell>{txn.user}</TableCell>
                         <TableCell>{txn.amount}</TableCell>
@@ -126,7 +124,7 @@ export default function AdminPage() {
               <CardContent className="space-y-4">
                 <div className="p-4 border rounded-lg">
                     <p className="text-sm text-muted-foreground">Current Vault Balance</p>
-                    <p className="text-3xl font-bold">₹91,000.00</p>
+                    <p className="text-3xl font-bold">₹0.00</p>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="adjustment">Adjustment Amount (₹)</Label>

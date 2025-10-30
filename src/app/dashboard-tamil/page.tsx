@@ -150,7 +150,7 @@ export default function DashboardTamilPage() {
                 <CardTitle className="text-sm font-medium">
                   மொத்த கை இருப்பு
                 </CardTitle>
-                <p className="text-4xl font-bold">₹1,00,000</p>
+                <p className="text-4xl font-bold">₹0</p>
               </div>
               <Copy className="cursor-pointer" />
             </CardHeader>
@@ -171,7 +171,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   வழங்கப்பட்ட மொத்தக் கடன்கள்
                 </p>
-                <p className="text-3xl font-bold">₹30,000</p>
+                <p className="text-3xl font-bold">₹0</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 வழங்கப்பட்ட அசல் தொகை
@@ -182,7 +182,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   மொத்த கடன் பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">3</p>
+                <p className="text-3xl font-bold">0</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 கடன் பெற்ற பயனர்கள்
@@ -204,7 +204,7 @@ export default function DashboardTamilPage() {
             <Card className="flex flex-col justify-between p-6">
               <div>
                 <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
-                <p className="text-3xl font-bold">₹1,000</p>
+                <p className="text-3xl font-bold">₹0</p>
               </div>
                <p className="text-xs text-muted-foreground mt-2">பயனர்கள் சேமித்தவை</p>
             </Card>
@@ -213,7 +213,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   சேமிப்புத் திட்ட பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">1</p>
+                <p className="text-3xl font-bold">0</p>
               </div>
                <p className="text-xs text-muted-foreground mt-2">
                 திட்டத்தில் பங்கேற்கும் பயனர்கள்

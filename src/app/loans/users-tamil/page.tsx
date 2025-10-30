@@ -26,40 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
-const initialLoanUsers = [
-  {
-    id: "user_001",
-    name: "குமார்",
-    loanAmount: 10000,
-    paidAmount: 3000,
-    status: "செயலில்",
-    avatarUrl: "https://picsum.photos/seed/101/100/100",
-  },
-  {
-    id: "user_002",
-    name: "பிரியா",
-    loanAmount: 5000,
-    paidAmount: 5000,
-    status: "முடிந்தது",
-    avatarUrl: "https://picsum.photos/seed/102/100/100",
-  },
-  {
-    id: "user_003",
-    name: "அருண்",
-    loanAmount: 15000,
-    paidAmount: 5000,
-    status: "செயலில்",
-    avatarUrl: "https://picsum.photos/seed/103/100/100",
-  },
-    {
-    id: "user_004",
-    name: "விஜய்",
-    loanAmount: 0,
-    paidAmount: 0,
-    status: "கடன் இல்லை",
-    avatarUrl: "https://picsum.photos/seed/104/100/100",
-  },
-];
+const initialLoanUsers = [];
 
 
 export default function LoanUsersPage() {
@@ -119,7 +86,12 @@ export default function LoanUsersPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {loanUsers.map((user) => (
+          {loanUsers.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
+            </div>
+          ) : (
+            loanUsers.map((user) => (
               <Card key={user.id} className="flex flex-col text-center">
                 <CardContent className="flex-1 p-6 space-y-4">
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
@@ -168,7 +140,8 @@ export default function LoanUsersPage() {
                     </div>
                 </CardFooter>
               </Card>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </TamilAppLayout>

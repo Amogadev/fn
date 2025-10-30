@@ -10,18 +10,13 @@ import Link from "next/link";
 
 const loanUser = {
     id: "user_001",
-    name: "குமார்",
-    loanAmount: 10000,
-    paidAmount: 3000,
-    status: "செயலில்",
+    name: "பயனர்",
+    loanAmount: 0,
+    paidAmount: 0,
+    status: "கடன் இல்லை",
     avatarUrl: "https://picsum.photos/seed/101/100/100",
-    joinDate: "2024-07-01",
-    transactions: [
-        { id: 't1', date: '2024-07-01', description: 'கடன் வழங்கப்பட்டது', amount: -10000, type: 'debit' },
-        { id: 't2', date: '2024-08-01', description: 'மாதாந்திரத் தவணை', amount: 1000, type: 'credit' },
-        { id: 't3', date: '2024-09-01', description: 'மாதாந்திரத் தவணை', amount: 1000, type: 'credit' },
-        { id: 't4', date: '2024-10-01', description: 'மாதாந்திரத் தவணை', amount: 1000, type: 'credit' },
-    ]
+    joinDate: new Date().toISOString().split('T')[0],
+    transactions: []
 };
 
 
@@ -54,6 +49,8 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                         </div>
                          {user.status === 'முடிந்தது' ? (
                             <Badge variant="default">முழுதும் செலுத்தப்பட்டது</Badge>
+                         ) : user.status === 'கடன் இல்லை' ? (
+                            <Badge variant="outline">கடன் இல்லை</Badge>
                          ) : (
                             <Badge variant="secondary">{user.status}</Badge>
                          )}
@@ -88,7 +85,11 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {user.transactions.map((tx) => (
+                                {user.transactions.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
+                                    </TableRow>
+                                ) : user.transactions.map((tx) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>

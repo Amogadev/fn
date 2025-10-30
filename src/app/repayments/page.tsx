@@ -22,11 +22,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-const activeLoans = [
-  { id: "txn_001", user: "Aarav Patel", total: 10000, paid: 2000 },
-  { id: "txn_003", user: "Rohan Mehta", total: 25000, paid: 5000 },
-  { id: "txn_005", user: "Vikram Singh", total: 50000, paid: 10000 },
-];
+const activeLoans = [];
 
 export default function RepaymentsPage() {
   const [selectedLoanId, setSelectedLoanId] = useState<string | null>(null);

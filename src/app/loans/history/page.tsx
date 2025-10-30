@@ -16,48 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const transactions = [
-  {
-    id: "txn_001",
-    user: "Aarav Patel",
-    amount: "₹10,000",
-    type: "Loan",
-    status: "Active",
-    date: "2024-07-15",
-  },
-  {
-    id: "txn_002",
-    user: "Priya Sharma",
-    amount: "₹5,000",
-    type: "EMI",
-    status: "Repaid",
-    date: "2024-06-20",
-  },
-  {
-    id: "txn_003",
-    user: "Rohan Mehta",
-    amount: "₹25,000",
-    type: "Loan",
-    status: "Active",
-    date: "2024-07-01",
-  },
-  {
-    id: "txn_004",
-    user: "Sneha Reddy",
-    amount: "₹2,500",
-    type: "EMI",
-    status: "Overdue",
-    date: "2024-05-10",
-  },
-  {
-    id: "txn_005",
-    user: "Vikram Singh",
-    amount: "₹50,000",
-    type: "Loan",
-    status: "Active",
-    date: "2024-07-18",
-  },
-];
+const transactions = [];
 
 const getStatusVariant = (status: string) => {
   switch (status.toLowerCase()) {
@@ -104,7 +63,11 @@ export default function HistoryPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((txn) => (
+                {transactions.length === 0 ? (
+                    <TableRow>
+                        <TableCell colSpan={5} className="text-center">No transactions found.</TableCell>
+                    </TableRow>
+                ) : transactions.map((txn) => (
                   <TableRow key={txn.id}>
                     <TableCell className="font-medium">{txn.user}</TableCell>
                     <TableCell className="text-right">{txn.amount}</TableCell>

@@ -10,20 +10,14 @@ import Link from "next/link";
 
 const diwaliUser = {
     id: "ds_user_001",
-    name: "சுனிதா",
-    contribution: 1000,
+    name: "பயனர்",
+    contribution: 0,
     frequency: "மாதாந்திர",
-    totalSaved: 5000,
+    totalSaved: 0,
     avatarUrl: "https://picsum.photos/seed/201/100/100",
     joinDate: "2024-06-01",
-    estimatedBonus: 500,
-    transactions: [
-        { id: 't1', date: '2024-06-01', description: 'மாதாந்திர பங்களிப்பு', amount: 1000 },
-        { id: 't2', date: '2024-07-01', description: 'மாதாந்திர பங்களிப்பு', amount: 1000 },
-        { id: 't3', date: '2024-08-01', description: 'மாதாந்திர பங்களிப்பு', amount: 1000 },
-        { id: 't4', date: '2024-09-01', description: 'மாதாந்திர பங்களிப்பு', amount: 1000 },
-        { id: 't5', date: '2024-10-01', description: 'மாதாந்திர பங்களிப்பு', amount: 1000 },
-    ]
+    estimatedBonus: 0,
+    transactions: []
 };
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
@@ -85,7 +79,11 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {user.transactions.map((tx) => (
+                                {user.transactions.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
+                                    </TableRow>
+                                ) : user.transactions.map((tx) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>

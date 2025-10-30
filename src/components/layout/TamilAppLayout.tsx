@@ -71,7 +71,41 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 md:hidden">
+        <header className="flex h-14 items-center justify-between border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+           <Sheet>
+            <SheetTrigger asChild>
+              <div className="flex items-center gap-2 font-semibold md:hidden">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                  <span className="font-headline">வைப்புத்தொகை 360</span>
+              </div>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col">
+              <nav className="grid gap-2 text-lg font-medium">
+                <Link
+                  href="#"
+                  className="flex items-center gap-2 text-lg font-semibold mb-4"
+                >
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                  <span className="sr-only">வைப்புத்தொகை 360</span>
+                </Link>
+                {navItems.map((item) => (
+                    <Link
+                        key={`${item.href}-${item.label}`}
+                        href={item.href}
+                        className={cn(
+                            "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                            pathname === item.href && "bg-muted text-foreground"
+                        )}
+                    >
+                        <item.icon className="h-5 w-5" />
+                        {item.label}
+                    </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+          {/* This empty div is for spacing on desktop */}
+          <div className="hidden md:block"></div>
            <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -94,7 +128,7 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
                 </Link>
                 {navItems.map((item) => (
                     <Link
-                        key={item.label}
+                        key={`${item.href}-${item.label}`}
                         href={item.href}
                         className={cn(
                             "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
@@ -108,10 +142,6 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
               </nav>
             </SheetContent>
           </Sheet>
-           <div className="flex items-center gap-2 font-semibold md:hidden">
-              <ShieldCheck className="h-6 w-6 text-primary" />
-              <span className="font-headline">வைப்புத்தொகை 360</span>
-            </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
             {children}
@@ -120,7 +150,7 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
             <div className="fixed bottom-0 left-0 right-0 md:hidden bg-background border-t shadow-lg z-10">
                 <div className="grid grid-cols-5 h-16">
                     {navItems.map((item) => (
-                        <FloatingNavItem key={item.label} {...item} isActive={pathname === item.href} />
+                        <FloatingNavItem key={`${item.href}-${item.label}`} {...item} isActive={pathname === item.href} />
                     ))}
                 </div>
             </div>

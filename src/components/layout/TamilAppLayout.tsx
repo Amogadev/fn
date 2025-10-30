@@ -62,34 +62,17 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
         </Sidebar>
         <SidebarInset>
              <header className="flex items-center justify-between p-4 border-b bg-muted/40 md:hidden">
-                <Link href="/" className="flex items-center gap-2 font-semibold">
-                    <ShieldCheck className="h-6 w-6 text-primary" />
-                    <span className="font-headline">வைப்புத்தொகை 360</span>
-                </Link>
-                <SidebarTrigger />
+                <div className="flex items-center gap-2">
+                    <SidebarTrigger>
+                        <ShieldCheck className="h-6 w-6 text-primary" />
+                    </SidebarTrigger>
+                    <Link href="/" className="flex items-center gap-2 font-semibold">
+                        <span className="font-headline">வைப்புத்தொகை 360</span>
+                    </Link>
+                </div>
              </header>
             <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background relative">
                 {children}
-                {showFloatingNav && (
-                    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
-                        <div className="bg-background/80 backdrop-blur-sm p-3 rounded-full border shadow-lg">
-                            <nav className="flex items-center gap-2">
-                                {navItems.map((item) => (
-                                    <Link key={item.label} href={item.href}>
-                                        <SidebarMenuButton
-                                            isActive={pathname === item.href}
-                                            tooltip={item.label}
-                                            className="!w-16 !h-16 !p-0 rounded-full flex-col !gap-1 text-xs"
-                                        >
-                                            <item.icon className="h-6 w-6" />
-                                            <span className="!text-[12px] group-data-[collapsible=icon]:hidden">{item.label}</span>
-                                        </SidebarMenuButton>
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                )}
             </main>
         </SidebarInset>
     </SidebarProvider>

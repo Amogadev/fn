@@ -118,8 +118,8 @@ export default function NewDiwaliSchemePage() {
             <p className="text-lg font-semibold text-primary">படி 1: பயனர் பதிவு</p>
             <p className="text-muted-foreground">சரிபார்ப்புக்காக உங்கள் தகவலை வழங்கவும்.</p>
 
-             <div className="grid gap-8 lg:grid-cols-3">
-                <div className="lg:col-span-2">
+             <div className="grid gap-8 lg:grid-cols-2">
+                <div className="lg:col-span-1">
                     <Card>
                         <CardHeader>
                             <CardTitle>உங்கள் விவரங்கள்</CardTitle>
@@ -145,7 +145,7 @@ export default function NewDiwaliSchemePage() {
                         </CardContent>
                     </Card>
                 </div>
-                 <div className="space-y-4">
+                 <div className="space-y-4 lg:col-span-1">
                      <Card>
                         <CardHeader>
                             <CardTitle>முகப் புகைப்படம் (விருப்பத்தேர்வு)</CardTitle>

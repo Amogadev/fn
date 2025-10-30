@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Button } from "@/components/ui/button";
@@ -26,12 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { CameraCapture } from "@/components/CameraCapture";
 
 export default function NewDiwaliSchemePage() {
   const { toast } = useToast();
   const router = useRouter();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [diwaliUsers, setDiwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
   
@@ -41,51 +39,6 @@ export default function NewDiwaliSchemePage() {
   const [contribution, setContribution] = useState<string | undefined>();
   const [frequency, setFrequency] = useState<string | undefined>();
 
-  const getCameraPermission = async () => {
-    if (!("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)) {
-      toast({
-        variant: "destructive",
-        title: "கேமரா ஆதரிக்கப்படவில்லை",
-        description: "உங்கள் உலாவி கேமரா அணுகலை ஆதரிக்கவில்லை.",
-      });
-      setHasCameraPermission(false);
-      return;
-    }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setHasCameraPermission(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      setHasCameraPermission(false);
-      toast({
-        variant: "destructive",
-        title: "கேமரா அணுகல் மறுக்கப்பட்டது",
-        description: "இந்தப் பயன்பாட்டைப் பயன்படுத்த, உங்கள் உலாவி அமைப்புகளில் கேமரா அனுமதிகளை இயக்கவும்.",
-      });
-    }
-  };
-
-  const captureImage = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      canvas.getContext("2d")?.drawImage(videoRef.current, 0, 0);
-      const dataUri = canvas.toDataURL("image/jpeg");
-      setCapturedImage(dataUri);
-
-      if (videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-      setHasCameraPermission(null);
-    }
-  };
   
   const currentDate = new Date().toLocaleDateString('ta-IN', {
     day: 'numeric',
@@ -130,11 +83,15 @@ export default function NewDiwaliSchemePage() {
     router.push("/diwali-scheme/users-tamil");
   };
 
+  const handleLivePhotoCapture = (dataUri: string) => {
+    setCapturedImage(dataUri);
+  };
+
 
   return (
     <TamilAppLayout showFloatingNav>
       <div className="space-y-8">
-        <header className="flex items-center justify-between">
+         <header className="flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <Link href="/diwali-scheme/users-tamil">
                     <Button variant="ghost" size="icon">
@@ -154,9 +111,6 @@ export default function NewDiwaliSchemePage() {
             <h2 className="text-3xl font-bold mb-2 font-headline">
                 தீபாவளி சேமிப்புத் திட்டத்தில் சேரவும்
             </h2>
-            <p className="text-muted-foreground">
-                புதிய பயனரைச் சேர்த்து உடனடியாக உங்கள் சேமிப்புத் திட்டத்தைத் தொடங்கவும்.
-            </p>
         </div>
 
 
@@ -198,44 +152,7 @@ export default function NewDiwaliSchemePage() {
                             <CardDescription>ஒரு தெளிவான படத்தைப் பிடிக்கவும்</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center space-y-4">
-                             <div className="w-full bg-muted rounded-lg flex items-center justify-center overflow-hidden aspect-video">
-                                {capturedImage ? (
-                                    <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
-                                ) : hasCameraPermission === true ? (
-                                    <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
-                                ) : (
-                                    <div className="text-center text-muted-foreground p-4">
-                                        <User className="mx-auto h-12 w-12" />
-                                        <p className="text-sm">படம் இல்லை</p>
-                                    </div>
-                                )}
-                            </div>
-                            
-                            {hasCameraPermission === true && !capturedImage && (
-                                <Button onClick={captureImage} className="w-full">புகைப்படம் எடு</Button>
-                            )}
-
-                            {hasCameraPermission === false && (
-                                <Alert variant="destructive">
-                                <AlertTitle>கேமரா அணுகல் தேவை</AlertTitle>
-                                <AlertDescription>
-                                    இந்த அம்சத்தைப் பயன்படுத்த, கேமரா அணுகலை அனுமதிக்கவும்.
-                                </AlertDescription>
-                                </Alert>
-                            )}
-
-                            {!capturedImage && hasCameraPermission !== true && (
-                                <Button onClick={getCameraPermission} className="w-full">
-                                    <Camera className="w-4 h-4 mr-2" />
-                                    கேமராவைத் திற
-                                </Button>
-                            )}
-                            {capturedImage && (
-                                <Button onClick={() => { setCapturedImage(null); getCameraPermission(); }} className="w-full">
-                                    <Camera className="w-4 h-4 mr-2" />
-                                    மீண்டும் எடு
-                                </Button>
-                            )}
+                            <CameraCapture onCapture={handleLivePhotoCapture} />
                         </CardContent>
                      </Card>
                   </div>
@@ -301,7 +218,6 @@ export default function NewDiwaliSchemePage() {
 
             <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
         </div>
-        <video ref={videoRef} className="hidden" autoPlay muted playsInline />
       </div>
     </TamilAppLayout>
   );

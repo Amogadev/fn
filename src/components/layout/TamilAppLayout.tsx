@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 
@@ -44,10 +44,14 @@ const navItems = [
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
 ];
 
-export function TamilAppLayout({ children }: { children: React.ReactNode }) {
+export function TamilAppLayout({ children, showFloatingNav }: { children: React.ReactNode, showFloatingNav?: boolean }) {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    setIsDarkMode(theme === 'dark');
+  }, [theme]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -70,7 +74,7 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
                          <SidebarMenuItem key={`${item.href}-${item.label}`}>
                              <Link href={item.href}>
                                 <SidebarMenuButton
-                                    isActive={pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard-tamil')}
+                                    isActive={pathname === item.href || (item.href !== '/dashboard-tamil' && pathname.startsWith(item.href))}
                                     tooltip={item.label}
                                 >
                                     <item.icon />

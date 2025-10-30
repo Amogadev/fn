@@ -77,8 +77,12 @@ const navItems = [
 
 export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
-  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
+  useEffect(() => {
+    setIsDarkMode(theme === 'dark');
+  }, [theme]);
+  
   const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
   const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
   

@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,14 +22,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Landmark } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters." }),
+    .min(1, { message: "Password is required." }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -39,14 +37,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const loginImage = PlaceHolderImages.find(
-    (img) => img.id === "login-background"
-  );
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      email: "admin@example.com",
       password: "",
     },
   });
@@ -61,93 +57,75 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="relative hidden bg-muted lg:block">
-        {loginImage && (
-          <Image
-            src={loginImage.imageUrl}
-            alt={loginImage.description}
-            data-ai-hint={loginImage.imageHint}
-            fill
-            className="object-cover"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/50 to-transparent" />
-        <div className="relative z-10 flex flex-col justify-end h-full p-10 text-primary-foreground">
-          <div className="mb-4">
-            <Landmark className="w-12 h-12" />
-          </div>
-          <h1 className="mt-2 text-5xl font-bold font-headline">LendEase</h1>
-          <p className="mt-4 text-lg">
-            Smart financing, simplified. Your trusted partner in loan
-            management.
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center justify-center py-12">
-        <Card className="w-full max-w-md mx-auto">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold font-headline">
-              Welcome Back
-            </CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="name@example.com"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input placeholder="********" type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={form.formState.isSubmitting}
-                >
-                  {form.formState.isSubmitting ? "Signing In..." : "Sign In"}
-                </Button>
-              </form>
-            </Form>
-            <div className="mt-4 text-sm text-center">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="underline text-accent">
-                Register
-              </Link>
+    <div className="flex items-center justify-center min-h-screen bg-muted/30">
+      <Card className="w-full max-w-sm mx-auto shadow-xl">
+        <CardHeader className="space-y-2 text-center">
+            <div className="flex items-center justify-center gap-2">
+                <ShieldCheck className="w-6 h-6 text-foreground" />
+                <CardTitle className="text-2xl font-bold font-headline">
+                    வைப்புத்தொகை 360
+                </CardTitle>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          <CardDescription>
+            நிர்வாகி உள்நுழைவு
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>மின்னஞ்சல்</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="admin@example.com"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>கடவுச்சொல்</FormLabel>
+                    <FormControl>
+                        <div className="relative">
+                            <Input placeholder="கடவுச்சொல்" type={showPassword ? "text" : "password"} {...field} />
+                             <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? "உள்நுழைகிறது..." : "உள்நுழைக"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -145,7 +145,7 @@ export default function RegisterPage() {
   const progress = (currentStep / steps.length) * 100;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-background">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-muted/30">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle className="font-headline">
@@ -303,7 +303,7 @@ export default function RegisterPage() {
           )}
         </CardFooter>
       </Card>
-      <p className="mt-4 text-sm text-muted-foreground">
+      <p className="mt-4 text-sm text-center text-muted-foreground">
         Already have an account?{" "}
         <Link href="/" className="underline text-accent">
           Sign In

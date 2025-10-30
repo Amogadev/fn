@@ -82,12 +82,13 @@ export default function DashboardTamilPage() {
   const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
   const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
 
-  const totalCashOnHand = 100000;
+  const initialVaultBalance = 100000;
   const loanUsersCount = loanUsers.length;
   const diwaliUsersCount = diwaliUsers.length;
   
   const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
   const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
+  const totalCashOnHand = initialVaultBalance - totalLoansGiven;
   
   const [currentDate, setCurrentDate] = useState('');
 

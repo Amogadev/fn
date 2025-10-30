@@ -144,7 +144,9 @@ export default function LoanUsersPage() {
                 </CardContent>
                 <CardFooter className="p-4 border-t">
                     <div className="flex justify-around w-full">
-                        <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Link href={`/loans/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
+                        </Link>
                         <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
                          <AlertDialog>
                             <AlertDialogTrigger asChild>

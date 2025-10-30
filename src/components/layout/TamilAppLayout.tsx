@@ -22,7 +22,6 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
@@ -32,7 +31,7 @@ const navItems = [
     { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
-export function TamilAppLayout({ children }: { children: React.ReactNode }) {
+export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -64,22 +63,11 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
         <SidebarInset>
              <header className="flex items-center justify-between p-4 border-b bg-muted/40 md:hidden">
-                <SidebarTrigger asChild>
-                  <div className="flex items-center gap-2 font-semibold">
-                      <ShieldCheck className="h-6 w-6 text-primary" />
-                      <span className="font-headline">வைப்புத்தொகை 360</span>
-                  </div>
-                </SidebarTrigger>
-                <SidebarTrigger asChild>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="shrink-0"
-                    >
-                        <ShieldCheck className="h-5 w-5" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                    </Button>
-                </SidebarTrigger>
+                <div className="flex items-center gap-2 font-semibold">
+                    <ShieldCheck className="h-6 w-6 text-primary" />
+                    <span className="font-headline">வைப்புத்தொகை 360</span>
+                </div>
+                <SidebarTrigger />
              </header>
             <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
                 {children}

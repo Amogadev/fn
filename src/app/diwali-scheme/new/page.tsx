@@ -135,27 +135,28 @@ export default function NewDiwaliSchemePage() {
     <TamilAppLayout showFloatingNav>
       <div className="space-y-8">
         <header className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
+            <div className="flex items-center gap-4">
+                <Link href="/diwali-scheme/users-tamil">
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <h1 className="text-2xl font-bold tracking-tight font-headline">
+                    வணக்கம்.
+                </h1>
+            </div>
             <div className="text-right">
-                <p className="text-lg font-semibold">{currentDate}</p>
+                <p className="text-sm text-muted-foreground">{currentDate}</p>
             </div>
         </header>
 
-        <div className="flex justify-between items-center">
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight font-headline">
-                    தீபாவளி சேமிப்புத் திட்டத்தில் சேரவும்
-                </h1>
-                <p className="text-muted-foreground">
-                    புதிய பயனரைச் சேர்த்து உடனடியாக உங்கள் சேமிப்புத் திட்டத்தைத் தொடங்கவும்.
-                </p>
-            </div>
-            <Link href="/dashboard-tamil">
-                <Button variant="outline">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    பங்கேற்பாளர் பட்டியலுக்குத் திரும்பு
-                </Button>
-            </Link>
+        <div>
+            <h2 className="text-3xl font-bold mb-2 font-headline">
+                தீபாவளி சேமிப்புத் திட்டத்தில் சேரவும்
+            </h2>
+            <p className="text-muted-foreground">
+                புதிய பயனரைச் சேர்த்து உடனடியாக உங்கள் சேமிப்புத் திட்டத்தைத் தொடங்கவும்.
+            </p>
         </div>
 
 
@@ -197,7 +198,7 @@ export default function NewDiwaliSchemePage() {
                             <CardDescription>ஒரு தெளிவான படத்தைப் பிடிக்கவும்</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center space-y-4">
-                             <div className="w-40 h-40 bg-muted rounded-lg flex items-center justify-center overflow-hidden">
+                             <div className="w-full bg-muted rounded-lg flex items-center justify-center overflow-hidden aspect-video">
                                 {capturedImage ? (
                                     <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
                                 ) : hasCameraPermission === true ? (
@@ -300,9 +301,8 @@ export default function NewDiwaliSchemePage() {
 
             <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
         </div>
-
+        <video ref={videoRef} className="hidden" autoPlay muted playsInline />
       </div>
-      <video ref={videoRef} className="hidden" autoPlay muted playsInline />
     </TamilAppLayout>
   );
 }

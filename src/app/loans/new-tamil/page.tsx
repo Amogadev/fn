@@ -79,7 +79,7 @@ export default function NewLoanTamilPage() {
         variant: "destructive",
         title: "கேமரா அணுகல் மறுக்கப்பட்டது",
         description:
-          "இந்தப் பயன்பாட்டைப் பயன்படுத்த, உங்கள் உலாவி அமைப்புகளில் கேமரா அனுமதிகளை இயக்கவும்.",
+          " இந்தப் பயன்பாட்டைப் பயன்படுத்த, உங்கள் உலாவி அமைப்புகளில் கேமரா அனுமதிகளை இயக்கவும்.",
       });
     }
   };
@@ -288,12 +288,12 @@ export default function NewLoanTamilPage() {
                         <div className="space-y-2">
                             <Label>கடன் வகை</Label>
                             <RadioGroup value={loanType} onValueChange={setLoanType} className="grid grid-cols-2 gap-4">
-                                <Label className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
+                                <Label htmlFor="normal" className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
                                     <RadioGroupItem value="normal" id="normal" className="sr-only" />
                                     <p className="font-semibold">சாதாரண கடன்</p>
                                     <p className="text-sm text-muted-foreground">(10% வட்டி)</p>
                                 </Label>
-                                <Label className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
+                                <Label htmlFor="emi" className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
                                     <RadioGroupItem value="emi" id="emi" className="sr-only" />
                                     <p className="font-semibold">EMI</p>
                                     <p className="text-sm text-muted-foreground">(12% வட்டி)</p>
@@ -304,7 +304,7 @@ export default function NewLoanTamilPage() {
                             <Label>செலுத்தும் கால இடைவெளி</Label>
                             <RadioGroup value={frequency} onValueChange={setFrequency} className="grid grid-cols-4 gap-2">
                                 {[{id: 'daily', label: "தினசரி"}, {id: 'weekly', label: "வாராந்திர"}, {id: 'monthly', label: "மாதாந்திர"}, {id: 'yearly', label: "வருடாந்திர"}].map(freq => (
-                                    <Label key={freq.id} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
+                                    <Label key={freq.id} htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
                                         <RadioGroupItem value={freq.id} id={freq.id} className="sr-only" />
                                         {freq.label}
                                     </Label>

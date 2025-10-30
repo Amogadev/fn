@@ -285,9 +285,9 @@ export default function NewLoanTamilPage() {
                             </div>
                             <Slider value={[loanAmount]} onValueChange={handleAmountChange} max={50000} step={1000} />
                         </div>
-                        <div className="space-y-2">
+                        <RadioGroup value={loanType} onValueChange={setLoanType} className="space-y-2">
                             <Label>கடன் வகை</Label>
-                            <RadioGroup value={loanType} onValueChange={setLoanType} className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <Label htmlFor="normal" className="p-4 border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer">
                                     <RadioGroupItem value="normal" id="normal" className="sr-only" />
                                     <p className="font-semibold">சாதாரண கடன்</p>
@@ -298,19 +298,19 @@ export default function NewLoanTamilPage() {
                                     <p className="font-semibold">EMI</p>
                                     <p className="text-sm text-muted-foreground">(12% வட்டி)</p>
                                 </Label>
-                            </RadioGroup>
-                        </div>
-                        <div className="space-y-2">
+                            </div>
+                        </RadioGroup>
+                        <RadioGroup value={frequency} onValueChange={setFrequency} className="space-y-2">
                             <Label>செலுத்தும் கால இடைவெளி</Label>
-                            <RadioGroup value={frequency} onValueChange={setFrequency} className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-4 gap-2">
                                 {[{id: 'daily', label: "தினசரி"}, {id: 'weekly', label: "வாராந்திர"}, {id: 'monthly', label: "மாதாந்திர"}, {id: 'yearly', label: "வருடாந்திர"}].map(freq => (
                                     <Label key={freq.id} htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md has-[:checked]:border-primary has-[:checked]:bg-primary/5 cursor-pointer text-sm">
                                         <RadioGroupItem value={freq.id} id={freq.id} className="sr-only" />
                                         {freq.label}
                                     </Label>
                                 ))}
-                            </RadioGroup>
-                        </div>
+                            </div>
+                        </RadioGroup>
                     </CardContent>
                   </Card>
                 </div>

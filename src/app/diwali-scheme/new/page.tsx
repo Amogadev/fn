@@ -1,0 +1,184 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Camera, User } from "lucide-react";
+import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+export default function NewDiwaliSchemePage() {
+  const { toast } = useToast();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+
+  const getCameraPermission = async () => {
+    if (!("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)) {
+      toast({
+        variant: "destructive",
+        title: "கேமரா ஆதரிக்கப்படவில்லை",
+        description: "உங்கள் உலாவி கேமரா அணுகலை ஆதரிக்கவில்லை.",
+      });
+      setHasCameraPermission(false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setHasCameraPermission(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      setHasCameraPermission(false);
+      toast({
+        variant: "destructive",
+        title: "கேமரா அணுகல் மறுக்கப்பட்டது",
+        description: "இந்தப் பயன்பாட்டைப் பயன்படுத்த, உங்கள் உலாவி அமைப்புகளில் கேமரா அனுமதிகளை இயக்கவும்.",
+      });
+    }
+  };
+
+  const captureImage = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      canvas.getContext("2d")?.drawImage(videoRef.current, 0, 0);
+      const dataUri = canvas.toDataURL("image/jpeg");
+      setCapturedImage(dataUri);
+
+      if (videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      setHasCameraPermission(null);
+    }
+  };
+  
+  const currentDate = new Date().toLocaleDateString('ta-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+
+  return (
+    <TamilAppLayout showFloatingNav={false}>
+      <div className="space-y-8">
+        <header className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
+            <div className="text-right">
+                <p className="text-lg font-semibold">{currentDate}</p>
+            </div>
+        </header>
+
+        <div className="flex justify-between items-center">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight font-headline">
+                    தீபாவளி சேமிப்புத் திட்டத்தில் சேரவும்
+                </h1>
+                <p className="text-muted-foreground">
+                    புதிய பயனரைச் சேர்த்து உடனடியாக உங்கள் சேமிப்புத் திட்டத்தைத் தொடங்கவும்.
+                </p>
+            </div>
+            <Link href="/dashboard-tamil">
+                <Button variant="outline">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    பங்கேற்பாளர் பட்டியலுக்குத் திரும்பு
+                </Button>
+            </Link>
+        </div>
+
+
+        <div className="space-y-4">
+            <p className="text-lg font-semibold text-primary">படி 1: பயனர் பதிவு</p>
+            <p className="text-muted-foreground">சரிபார்ப்புக்காக உங்கள் தகவலை வழங்கவும்.</p>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>உங்கள் விவரங்கள்</CardTitle>
+                <CardDescription>
+                  தயவுசெய்து உங்கள் தகவலை அளித்து, சரிபார்ப்புக்காக ஒரு புகைப்படத்தைப் பிடிக்கவும்.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-8 lg:grid-cols-3">
+                  <div className="lg:col-span-2 space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="full-name">முழு பெயர்</Label>
+                      <Input id="full-name" placeholder="எ.கா., பிரியா" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
+                            <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
+                            <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" />
+                        </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                     <Label>முகப் புகைப்படம்</Label>
+                     <div className="w-full bg-muted rounded-lg flex items-center justify-center overflow-hidden aspect-square">
+                      {capturedImage ? (
+                        <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
+                      ) : hasCameraPermission === true ? (
+                         <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
+                      ) : (
+                        <div className="text-center text-muted-foreground p-4">
+                            <Camera className="mx-auto h-16 w-16" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {hasCameraPermission === true && !capturedImage && (
+                        <Button onClick={captureImage} className="w-full">புகைப்படம் எடு</Button>
+                    )}
+
+                    {hasCameraPermission === false && (
+                        <Alert variant="destructive">
+                          <AlertTitle>கேமரா அணுகல் தேவை</AlertTitle>
+                          <AlertDescription>
+                            இந்த அம்சத்தைப் பயன்படுத்த, கேமரா அணுகலை அனுமதிக்கவும்.
+                          </AlertDescription>
+                        </Alert>
+                    )}
+
+                    {!capturedImage && hasCameraPermission !== true && (
+                        <Button onClick={getCameraPermission} className="w-full">
+                            <Camera className="w-4 h-4 mr-2" />
+                            கேமராவைத் திற
+                        </Button>
+                    )}
+                     {capturedImage && (
+                        <Button onClick={() => { setCapturedImage(null); getCameraPermission(); }} className="w-full">
+                            <Camera className="w-4 h-4 mr-2" />
+                            மீண்டும் எடு
+                        </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+        </div>
+      </div>
+      <video ref={videoRef} className="hidden" autoPlay muted playsInline />
+    </TamilAppLayout>
+  );
+}

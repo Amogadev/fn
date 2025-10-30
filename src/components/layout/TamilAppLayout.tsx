@@ -25,12 +25,12 @@ import {
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
     { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
-    { href: "#", label: "தீபாவளி சிட்", icon: Gift },
+    { href: "/diwali-scheme/new", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
     { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
-export function TamilAppLayout({ children }: { children: React.ReactNode }) {
+export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -62,14 +62,34 @@ export function TamilAppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
         <SidebarInset>
              <header className="flex items-center justify-between p-4 border-b bg-muted/40 md:hidden">
-                <div className="flex items-center gap-2 font-semibold">
+                <Link href="/" className="flex items-center gap-2 font-semibold">
                     <ShieldCheck className="h-6 w-6 text-primary" />
                     <span className="font-headline">வைப்புத்தொகை 360</span>
-                </div>
+                </Link>
                 <SidebarTrigger />
              </header>
-            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
+            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background relative">
                 {children}
+                {showFloatingNav && (
+                    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
+                        <div className="bg-background/80 backdrop-blur-sm p-2 rounded-full border shadow-lg">
+                            <nav className="flex items-center gap-2">
+                                {navItems.map((item) => (
+                                    <Link key={item.label} href={item.href}>
+                                        <SidebarMenuButton
+                                            isActive={pathname === item.href}
+                                            tooltip={item.label}
+                                            className="!w-12 !h-12 !p-0 rounded-full flex-col !gap-0.5 text-xs"
+                                        >
+                                            <item.icon className="h-5 w-5" />
+                                            <span className="!text-[10px] group-data-[collapsible=icon]:hidden">{item.label}</span>
+                                        </SidebarMenuButton>
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    </div>
+                )}
             </main>
         </SidebarInset>
     </SidebarProvider>

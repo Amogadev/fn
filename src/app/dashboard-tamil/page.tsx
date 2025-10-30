@@ -33,7 +33,7 @@ const ActionCard = ({
   className?: string;
   href?: string;
 }) => {
-  const CardContent = (
+  const CardInnerContent = (
     <Card
       className={cn(
         "flex h-full flex-col items-center justify-center bg-card p-6 text-center hover:bg-muted/50 transition-colors",
@@ -47,16 +47,16 @@ const ActionCard = ({
   );
 
   if (href) {
-    return <Link href={href}>{CardContent}</Link>;
+    return <Link href={href}>{CardInnerContent}</Link>;
   }
 
-  return CardContent;
+  return CardInnerContent;
 };
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
     { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
-    { href: "#", label: "தீபாவளி சிட்", icon: Gift },
+    { href: "/diwali-scheme/new", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
     { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
@@ -75,7 +75,7 @@ export default function DashboardTamilPage() {
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
           <div className="text-right">
-            <p className="text-lg font-semibold">{currentDate.split(' ')[1]} {currentDate.split(' ')[0]}, {currentDate.split(' ')[2]}</p>
+            <p className="text-lg font-semibold">{currentDate}</p>
           </div>
         </header>
 
@@ -83,7 +83,7 @@ export default function DashboardTamilPage() {
             <CardContent className="p-2">
                 <nav className="flex items-center space-x-1">
                     {navItems.map((item) => (
-                        <Button key={item.href} asChild variant="ghost" className="flex-1 justify-start gap-2">
+                        <Button key={item.label} asChild variant="ghost" className="flex-1 justify-start gap-2">
                             <Link href={item.href}>
                                 <item.icon className="h-4 w-4" />
                                 {item.label}
@@ -149,6 +149,7 @@ export default function DashboardTamilPage() {
               description="சேமித்து பண்டிகை போனஸ் பெறுங்கள்"
               icon={Gift}
               className="lg:row-span-2"
+              href="/diwali-scheme/new"
             />
             <Card className="flex flex-col justify-between p-6">
               <div>

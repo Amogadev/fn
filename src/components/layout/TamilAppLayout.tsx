@@ -3,35 +3,56 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    LayoutGrid,
-    Users2,
-    Gift,
     BarChart,
+    Gift,
+    LayoutGrid,
+    LogOut,
+    PanelLeft,
     Settings,
     ShieldCheck,
+    Sun,
+    Users2,
 } from "lucide-react";
 import {
-  SidebarProvider,
   Sidebar,
-  SidebarHeader,
   SidebarContent,
+  SidebarHeader,
+  SidebarInset,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarProvider,
   SidebarTrigger,
-  SidebarInset,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import { Label } from "../ui/label";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
     { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
     { href: "/diwali-scheme/new", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
-    { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
 export function TamilAppLayout({ children, showFloatingNav = true }: { children: React.ReactNode, showFloatingNav?: boolean }) {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    setIsDarkMode(newTheme === 'dark');
+  }
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -57,19 +78,51 @@ export function TamilAppLayout({ children, showFloatingNav = true }: { children:
                              </Link>
                          </SidebarMenuItem>
                     ))}
+                    <SidebarMenuItem>
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <SidebarMenuButton tooltip="அமைப்புகள்">
+                                    <Settings />
+                                    <span>அமைப்புகள்</span>
+                                </SidebarMenuButton>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" side="right" align="start" sideOffset={8}>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    <Label htmlFor="dark-mode-toggle" className="flex items-center gap-2 cursor-pointer">
+                                        <Sun className="w-4 h-4" />
+                                        <span>இருண்ட பயன்முறை</span>
+                                    </Label>
+                                    <Switch
+                                        id="dark-mode-toggle"
+                                        className="ml-auto"
+                                        checked={isDarkMode}
+                                        onCheckedChange={toggleTheme}
+                                    />
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <Link href="/">
+                                    <DropdownMenuItem>
+                                        <LogOut className="w-4 h-4 mr-2" />
+                                        <span>வெளியேறு</span>
+                                    </DropdownMenuItem>
+                                </Link>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarContent>
         </Sidebar>
         <SidebarInset>
              <header className="flex items-center justify-between p-4 border-b bg-muted/40 md:hidden">
-                <div className="flex items-center gap-2">
-                    <SidebarTrigger>
-                        <ShieldCheck className="h-6 w-6 text-primary" />
-                    </SidebarTrigger>
-                    <Link href="/" className="flex items-center gap-2 font-semibold">
-                        <span className="font-headline">வைப்புத்தொகை 360</span>
-                    </Link>
-                </div>
+                <SidebarTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <PanelLeft />
+                    </Button>
+                </SidebarTrigger>
+                <Link href="/" className="flex items-center gap-2 font-semibold">
+                    <ShieldCheck className="h-6 w-6 text-primary" />
+                    <span className="font-headline">வைப்புத்தொகை 360</span>
+                </Link>
              </header>
             <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background relative">
                 {children}

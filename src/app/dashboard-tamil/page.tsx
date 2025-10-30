@@ -13,8 +13,7 @@ import {
   Users,
   Gift,
   LayoutGrid,
-  Users2,
-  FileText,
+  BarChart,
   Settings,
   UserPlus,
 } from "lucide-react";
@@ -74,9 +73,9 @@ const ActionCard = ({
 export default function DashboardTamilPage() {
   const navItems = [
     { label: "முகப்பு", icon: LayoutGrid, active: true },
-    { label: "கடன் விவரங்கள்", icon: Users2, active: false },
+    { label: "கடன் விவரங்கள்", icon: Users, active: false },
     { label: "தீபாவளி சிட்", icon: Gift, active: false },
-    { label: "அறிக்கைகள்", icon: FileText, active: false },
+    { label: "அறிக்கைகள்", icon: BarChart, active: false },
     { label: "அமைப்புகள்", icon: Settings, active: false },
   ];
   return (

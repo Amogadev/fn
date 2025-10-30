@@ -35,6 +35,7 @@ import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { Label } from "../ui/label";
+import { Button } from "../ui/button";
 
 const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },

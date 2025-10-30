@@ -138,8 +138,8 @@ export default function DashboardTamilPage() {
         </section>
       </main>
 
-       <footer className="fixed bottom-4 inset-x-4 h-20 bg-white rounded-full shadow-lg md:hidden">
-            <div className="flex items-center justify-around h-full">
+       <footer className="fixed bottom-4 left-1/2 -translate-x-1/2 h-20 bg-white rounded-full shadow-lg md:hidden">
+            <div className="flex items-center justify-around h-full px-4">
                  {navItems.map((item) => (
                     <Link href="#" key={item.label} className={cn(
                         "flex flex-col items-center justify-center text-xs w-16",

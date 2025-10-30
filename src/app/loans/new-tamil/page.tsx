@@ -25,14 +25,11 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { CameraCapture } from "@/components/CameraCapture";
 
 export default function NewLoanTamilPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<
-    boolean | null
-  >(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loanUsers, setLoanUsers] = useLocalStorage<any[]>("loan-users", []);
 
@@ -48,63 +45,8 @@ export default function NewLoanTamilPage() {
   const interestAmount = loanAmount * interestRate;
   const disbursedAmount = loanAmount - interestAmount;
 
-  useEffect(() => {
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
-
-  const getCameraPermission = async () => {
-    if (
-      !("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)
-    ) {
-      toast({
-        variant: "destructive",
-        title: "கேமரா ஆதரிக்கப்படவில்லை",
-        description:
-          "உங்கள் உலாவி கேமரா அணுகலை ஆதரிக்கவில்லை.",
-      });
-      setHasCameraPermission(false);
-      return;
-    }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setHasCameraPermission(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      setHasCameraPermission(false);
-      toast({
-        variant: "destructive",
-        title: "கேமரா அணுகல் மறுக்கப்பட்டது",
-        description:
-          " இந்தப் பயன்பாட்டைப் பயன்படுத்த, உங்கள் உலாவி அமைப்புகளில் கேமரா அனுமதிகளை இயக்கவும்.",
-      });
-    }
-  };
-
-  const captureImage = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      canvas.getContext("2d")?.drawImage(videoRef.current, 0, 0);
-      const dataUri = canvas.toDataURL("image/jpeg");
-      setCapturedImage(dataUri);
-
-      if (videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-      setHasCameraPermission(null);
-    }
+  const handleLivePhotoCapture = (dataUri: string) => {
+    setCapturedImage(dataUri);
   };
 
   const handleAmountChange = (value: number[]) => {
@@ -220,44 +162,7 @@ export default function NewLoanTamilPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center space-y-4">
-                    <div className="w-40 h-40 bg-muted rounded-lg flex items-center justify-center overflow-hidden">
-                      {capturedImage ? (
-                        <img src={capturedImage} alt="Captured" className="w-full h-full object-cover" />
-                      ) : hasCameraPermission === true ? (
-                         <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted />
-                      ) : (
-                        <div className="text-center text-muted-foreground p-4">
-                            <User className="mx-auto h-12 w-12" />
-                            <p className="text-sm">படம் இல்லை</p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {hasCameraPermission === true && !capturedImage && (
-                        <Button onClick={captureImage}>புகைப்படம் எடு</Button>
-                    )}
-
-                    {hasCameraPermission === false && (
-                        <Alert variant="destructive">
-                          <AlertTitle>கேமரா அணுகல் தேவை</AlertTitle>
-                          <AlertDescription>
-                            இந்த அம்சத்தைப் பயன்படுத்த, கேமரா அணுகலை அனுமதிக்கவும்.
-                          </AlertDescription>
-                        </Alert>
-                    )}
-
-                    {!capturedImage && hasCameraPermission !== true && (
-                        <Button onClick={getCameraPermission}>
-                            <Camera className="w-4 h-4 mr-2" />
-                            கேமராவைத் திற
-                        </Button>
-                    )}
-                     {capturedImage && (
-                        <Button onClick={() => { setCapturedImage(null); getCameraPermission(); }}>
-                            <Camera className="w-4 h-4 mr-2" />
-                            மீண்டும் எடு
-                        </Button>
-                    )}
+                    <CameraCapture onCapture={handleLivePhotoCapture} />
                   </CardContent>
                 </Card>
               </div>

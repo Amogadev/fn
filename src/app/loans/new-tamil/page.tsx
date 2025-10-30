@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -42,6 +43,10 @@ export default function NewLoanTamilPage() {
   const [loanAmount, setLoanAmount] = useState(0);
   const [loanType, setLoanType] = useState("normal");
   const [frequency, setFrequency] = useState("monthly");
+
+  const interestRate = loanType === 'normal' ? 0.10 : 0.12;
+  const interestAmount = loanAmount * interestRate;
+  const disbursedAmount = loanAmount - interestAmount;
 
   useEffect(() => {
     return () => {
@@ -285,29 +290,37 @@ export default function NewLoanTamilPage() {
                             </div>
                             <Slider value={[loanAmount]} onValueChange={handleAmountChange} max={50000} step={1000} />
                         </div>
+                        
                         <RadioGroup value={loanType} onValueChange={setLoanType} className="space-y-2">
                             <Label>கடன் வகை</Label>
                             <div className="grid grid-cols-2 gap-4">
-                                <Label htmlFor="normal" className="flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
-                                    <RadioGroupItem value="normal" id="normal" className="sr-only" />
-                                    <p className="font-semibold">சாதாரண கடன்</p>
-                                    <p className="text-sm text-muted-foreground">(10% வட்டி)</p>
-                                </Label>
-                                <Label htmlFor="emi" className="flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
-                                    <RadioGroupItem value="emi" id="emi" className="sr-only" />
-                                    <p className="font-semibold">EMI</p>
-                                    <p className="text-sm text-muted-foreground">(12% வட்டி)</p>
-                                </Label>
+                                <div>
+                                    <RadioGroupItem value="normal" id="normal" className="peer sr-only" />
+                                    <Label htmlFor="normal" className="flex flex-col items-center justify-between p-4 border-2 rounded-md cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
+                                        <p className="font-semibold">சாதாரண கடன்</p>
+                                        <p className="text-sm text-muted-foreground">(10% வட்டி)</p>
+                                    </Label>
+                                </div>
+                                <div>
+                                    <RadioGroupItem value="emi" id="emi" className="peer sr-only" />
+                                    <Label htmlFor="emi" className="flex flex-col items-center justify-between p-4 border-2 rounded-md cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
+                                        <p className="font-semibold">EMI</p>
+                                        <p className="text-sm text-muted-foreground">(12% வட்டி)</p>
+                                    </Label>
+                                </div>
                             </div>
                         </RadioGroup>
+
                         <RadioGroup value={frequency} onValueChange={setFrequency} className="space-y-2">
                             <Label>செலுத்தும் கால இடைவெளி</Label>
                             <div className="grid grid-cols-4 gap-2">
                                 {[{id: 'daily', label: "தினசரி"}, {id: 'weekly', label: "வாராந்திர"}, {id: 'monthly', label: "மாதாந்திர"}, {id: 'yearly', label: "வருடாந்திர"}].map(freq => (
-                                    <Label key={freq.id} htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md cursor-pointer text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5">
-                                        <RadioGroupItem value={freq.id} id={freq.id} className="sr-only" />
-                                        {freq.label}
-                                    </Label>
+                                    <div key={freq.id}>
+                                        <RadioGroupItem value={freq.id} id={freq.id} className="peer sr-only" />
+                                        <Label htmlFor={freq.id} className="px-4 py-2 text-center border rounded-md cursor-pointer text-sm peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5 block">
+                                            {freq.label}
+                                        </Label>
+                                    </div>
                                 ))}
                             </div>
                         </RadioGroup>
@@ -323,20 +336,20 @@ export default function NewLoanTamilPage() {
                   </CardHeader>
                   <CardContent className="space-y-4 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">கடன் தொகை:</span>
+                      <span className="text-muted-foreground">கேட்ட தொகை:</span>
                       <span className="font-medium">₹{loanAmount.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">வட்டி (0%, முன்பணம்):</span>
-                      <span className="font-medium text-destructive">- ₹0</span>
+                      <span className="text-muted-foreground">வட்டி ({interestRate * 100}%):</span>
+                      <span className="font-medium text-destructive">- ₹{interestAmount.toLocaleString()}</span>
                     </div>
                      <div className="flex justify-between">
-                      <span className="text-muted-foreground">செலுத்த வேண்டிய தேதி:</span>
-                      <span className="font-medium">இன்று</span>
+                      <span className="text-muted-foreground">வழங்கப்படும் தொகை:</span>
+                      <span className="font-medium">₹{disbursedAmount.toLocaleString()}</span>
                     </div>
                     <hr />
                     <div className="flex justify-between font-bold text-base">
-                      <span>செலுத்த வேண்டிய மொத்தம்:</span>
+                      <span>திருப்பிச் செலுத்த வேண்டிய மொத்தம்:</span>
                       <span>₹{loanAmount.toLocaleString()}</span>
                     </div>
                   </CardContent>
@@ -348,7 +361,6 @@ export default function NewLoanTamilPage() {
             பயனரை உருவாக்கி கடன் விண்ணப்பத்தை சமர்ப்பிக்கவும்
         </Button>
       </div>
-      <video ref={videoRef} className="hidden" autoPlay muted playsInline />
     </TamilAppLayout>
-  );
+    );
 }

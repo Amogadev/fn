@@ -15,10 +15,23 @@ import {
   LayoutGrid,
   BarChart,
   Settings,
+  Sun,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const ActionCard = ({
   title,
@@ -58,11 +71,19 @@ const navItems = [
     { href: "/loans/new-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
     { href: "/diwali-scheme/new", label: "தீபாவளி சிட்", icon: Gift },
     { href: "#", label: "அறிக்கைகள்", icon: BarChart },
-    { href: "#", label: "அமைப்புகள்", icon: Settings },
 ];
 
 
 export default function DashboardTamilPage() {
+  const { theme, setTheme } = useTheme();
+  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    setIsDarkMode(newTheme === 'dark');
+  }
+
   const currentDate = new Date().toLocaleDateString('ta-IN', {
     day: 'numeric',
     month: 'long',
@@ -90,6 +111,35 @@ export default function DashboardTamilPage() {
                             </Link>
                         </Button>
                     ))}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="flex-1 justify-start gap-2">
+                          <Settings className="h-4 w-4" />
+                          அமைப்புகள்
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56">
+                          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <Label htmlFor="dark-mode-toggle-main" className="flex items-center gap-2 cursor-pointer">
+                                  <Sun className="w-4 h-4" />
+                                  <span>இருண்ட பயன்முறை</span>
+                              </Label>
+                              <Switch
+                                  id="dark-mode-toggle-main"
+                                  className="ml-auto"
+                                  checked={isDarkMode}
+                                  onCheckedChange={toggleTheme}
+                              />
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <Link href="/">
+                              <DropdownMenuItem>
+                                  <LogOut className="w-4 h-4 mr-2" />
+                                  <span>வெளியேறு</span>
+                              </DropdownMenuItem>
+                          </Link>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </nav>
             </CardContent>
         </Card>

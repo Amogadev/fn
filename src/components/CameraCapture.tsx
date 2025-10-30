@@ -72,8 +72,8 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
   };
 
   return (
-    <div className="flex flex-col items-center w-full gap-4">
-      <div className="relative w-full overflow-hidden border rounded-lg aspect-video bg-muted">
+    <div className="flex flex-col items-center w-full gap-2">
+      <div className="relative w-full overflow-hidden border rounded-lg aspect-video bg-muted max-w-sm">
         {capturedImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -92,26 +92,26 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
         )}
         {!stream && !capturedImage && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <Camera className="w-12 h-12 mb-2 text-muted-foreground" />
-            <p className="text-muted-foreground">Camera is off</p>
+            <Camera className="w-10 h-10 mb-2 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Camera is off</p>
           </div>
         )}
       </div>
       <div className="flex items-center gap-2">
         {!stream && !capturedImage && (
-          <Button onClick={startCamera}>
+          <Button onClick={startCamera} size="sm">
             <Camera className="w-4 h-4 mr-2" />
             Start Camera
           </Button>
         )}
         {stream && (
-          <Button onClick={captureImage}>
+          <Button onClick={captureImage} size="sm">
             <ImageIcon className="w-4 h-4 mr-2" />
             Capture Photo
           </Button>
         )}
         {capturedImage && (
-          <Button variant="outline" onClick={resetCapture}>
+          <Button variant="outline" onClick={resetCapture} size="sm">
             <RefreshCcw className="w-4 h-4 mr-2" />
             Retake
           </Button>

@@ -22,6 +22,15 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
 
     const estimatedDiwaliAmount = user.totalSaved + user.estimatedBonus;
 
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('ta-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(amount);
+    };
+
     return (
         <TamilAppLayout>
             <div className="space-y-6">
@@ -50,15 +59,15 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                     <CardContent className="grid gap-6 md:grid-cols-3">
                          <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">பங்களிப்பு</p>
-                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} / {user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'}</p>
+                            <p className="text-2xl font-bold">{formatCurrency(user.contribution)} / {user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'}</p>
                         </div>
                         <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
-                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.totalSaved)}</p>
+                            <p className="text-2xl font-bold">{formatCurrency(user.totalSaved)}</p>
                         </div>
                         <div className="p-4 text-center border rounded-lg bg-muted/50">
                              <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Gift className="w-4 h-4"/> தீபாவளி வருமானம்</p>
-                            <p className="text-2xl font-bold text-primary">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(estimatedDiwaliAmount)}</p>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(estimatedDiwaliAmount)}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -86,7 +95,7 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>
                                         <TableCell className="text-right font-medium text-green-600">
-                                            + {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(tx.amount)}
+                                            + {formatCurrency(tx.amount)}
                                         </TableCell>
                                     </TableRow>
                                 ))}

@@ -41,6 +41,15 @@ export default function LoanUsersPage() {
         });
     };
 
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('ta-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(amount);
+    };
+
     return (
     <TamilAppLayout>
       <div className="space-y-6">
@@ -100,16 +109,16 @@ export default function LoanUsersPage() {
                     <h3 className="text-xl font-semibold">{user.name}</h3>
                     {user.status === 'முடிந்தது' ? (
                          <div>
-                            <p className="text-muted-foreground">கடைசி கடன்: {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount)}</p>
+                            <p className="text-muted-foreground">கடைசி கடன்: {formatCurrency(user.loanAmount)}</p>
                             <Badge variant="default" className="mt-2">முழுதும் செலுத்தப்பட்டது</Badge>
                          </div>
                     ) : user.status === 'கடன் இல்லை' ? (
                          <Badge variant="secondary">கடன்கள் இல்லை</Badge>
                     ) : (
                         <div className="space-y-1 text-sm">
-                            <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount)}</span></div>
-                            <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.paidAmount)}</span></div>
-                            <div className="flex justify-between font-bold"><span>நிலுவை:</span> <span>{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount - user.paidAmount)}</span></div>
+                            <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{formatCurrency(user.loanAmount)}</span></div>
+                            <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{formatCurrency(user.paidAmount)}</span></div>
+                            <div className="flex justify-between font-bold"><span>நிலுவை:</span> <span>{formatCurrency(user.loanAmount - user.paidAmount)}</span></div>
                         </div>
                     )}
                 </CardContent>

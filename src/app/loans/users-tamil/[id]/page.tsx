@@ -22,6 +22,15 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
 
     const balance = user.loanAmount - user.paidAmount;
 
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('ta-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(amount);
+    };
+
     return (
         <TamilAppLayout>
             <div className="space-y-6">
@@ -56,15 +65,15 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                     <CardContent className="grid gap-6 md:grid-cols-3">
                          <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">மொத்தக் கடன்</p>
-                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.loanAmount)}</p>
+                            <p className="text-2xl font-bold">{formatCurrency(user.loanAmount)}</p>
                         </div>
                         <div className="p-4 text-center border rounded-lg">
                             <p className="text-sm text-muted-foreground">செலுத்தியது</p>
-                            <p className="text-2xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.paidAmount)}</p>
+                            <p className="text-2xl font-bold">{formatCurrency(user.paidAmount)}</p>
                         </div>
                         <div className="p-4 text-center border rounded-lg bg-muted/50">
                             <p className="text-sm text-muted-foreground">நிலுவை</p>
-                            <p className="text-2xl font-bold text-primary">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(balance)}</p>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(balance)}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -92,7 +101,7 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>
                                         <TableCell className={`text-right font-medium ${tx.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                                            {tx.type === 'credit' ? '+' : ''} {new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(tx.amount)}
+                                            {tx.type === 'credit' ? '+' : ''} {formatCurrency(tx.amount)}
                                         </TableCell>
                                     </TableRow>
                                 ))}

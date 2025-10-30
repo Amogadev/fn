@@ -125,6 +125,15 @@ export default function DashboardTamilPage() {
     setIsDarkMode(newTheme === 'dark');
   }
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ta-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
     <TamilAppLayout>
       <div className="space-y-8">
@@ -186,7 +195,7 @@ export default function DashboardTamilPage() {
                   மொத்த கை இருப்பு
                 </CardTitle>
                  {isClient ? (
-                    <p className="text-4xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalCashOnHand)}</p>
+                    <p className="text-4xl font-bold">{formatCurrency(dashboardData.totalCashOnHand)}</p>
                  ) : (
                     <p className="text-4xl font-bold">₹...</p>
                  )}
@@ -211,7 +220,7 @@ export default function DashboardTamilPage() {
                   வழங்கப்பட்ட மொத்தக் கடன்கள்
                 </p>
                  {isClient ? (
-                    <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalLoansGiven)}</p>
+                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalLoansGiven)}</p>
                  ) : (
                     <p className="text-3xl font-bold">₹...</p>
                  )}
@@ -248,7 +257,7 @@ export default function DashboardTamilPage() {
               <div>
                 <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
                 {isClient ? (
-                    <p className="text-3xl font-bold">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(dashboardData.totalDiwaliSavings)}</p>
+                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalDiwaliSavings)}</p>
                 ) : (
                     <p className="text-3xl font-bold">₹...</p>
                 )}

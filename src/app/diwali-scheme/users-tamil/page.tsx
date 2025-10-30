@@ -40,6 +40,15 @@ export default function DiwaliSchemeUsersPage() {
     });
   };
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ta-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
     <TamilAppLayout>
       <div className="space-y-6">
@@ -98,8 +107,8 @@ export default function DiwaliSchemeUsersPage() {
                     </Avatar>
                     <h3 className="text-xl font-semibold">{user.name}</h3>
                     <div className="space-y-1 text-sm">
-                        <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.contribution)} ({user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'})</span></div>
-                        <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{new Intl.NumberFormat('ta-IN', { style: 'currency', currency: 'INR' }).format(user.totalSaved)}</span></div>
+                        <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{formatCurrency(user.contribution)} ({user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'})</span></div>
+                        <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{formatCurrency(user.totalSaved)}</span></div>
                     </div>
                  </CardContent>
                 <CardFooter className="p-4 border-t">

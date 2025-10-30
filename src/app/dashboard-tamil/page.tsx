@@ -17,7 +17,8 @@ import {
   UserPlus,
 } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+
 
 const ActionCard = ({
   title,
@@ -139,7 +140,7 @@ export default function DashboardTamilPage() {
       </main>
 
        <footer className="fixed bottom-4 left-4 right-4 md:hidden">
-            <div className="flex items-center justify-around h-full px-4 py-3 bg-white rounded-2xl shadow-lg">
+            <div className="flex items-center justify-around max-w-md mx-auto h-full px-4 py-3 bg-white rounded-2xl shadow-lg">
                  {navItems.map((item) => (
                     <Link href="#" key={item.label} className={cn(
                         "flex flex-col items-center justify-center text-xs w-16",
@@ -153,8 +154,4 @@ export default function DashboardTamilPage() {
         </footer>
     </div>
   );
-}
-
-function cn(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
 }

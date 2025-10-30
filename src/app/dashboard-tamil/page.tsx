@@ -52,12 +52,31 @@ export default function DashboardTamilPage() {
   ];
   return (
     <div className="min-h-screen bg-gray-50 font-body">
-      <header className="flex items-center justify-between p-4 bg-white border-b">
-        <h1 className="text-xl font-bold">வணக்கம்.</h1>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <CalendarDays className="h-4 w-4" />
-          <span>30 அக்டோபர், 2025</span>
+      <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div className="flex items-center justify-between p-4 mx-auto max-w-7xl">
+          <h1 className="text-xl font-bold">வணக்கம்.</h1>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CalendarDays className="h-4 w-4" />
+            <span>30 அக்டோபர், 2025</span>
+          </div>
         </div>
+        <nav className="p-2 md:hidden bg-gray-50">
+          <div className="flex justify-around">
+            {navItems.map((item) => (
+              <Link
+                href="#"
+                key={item.label}
+                className={cn(
+                  "flex flex-col items-center justify-center text-center text-xs w-16",
+                  item.active ? "text-slate-800" : "text-muted-foreground"
+                )}
+              >
+                <item.icon className="w-6 h-6 mb-1" />
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
       </header>
 
       <main className="space-y-8 p-6 pb-24 md:pb-8">
@@ -141,24 +160,6 @@ export default function DashboardTamilPage() {
           </div>
         </section>
       </main>
-
-      <footer className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden">
-        <div className="mx-auto flex h-full max-w-sm items-center justify-around rounded-full bg-white px-4 py-3 shadow-lg">
-          {navItems.map((item) => (
-            <Link
-              href="#"
-              key={item.label}
-              className={cn(
-                "flex w-16 flex-col items-center justify-center text-center text-xs",
-                item.active ? "text-slate-800" : "text-muted-foreground"
-              )}
-            >
-              <item.icon className="mb-1 h-6 w-6" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </div>
-      </footer>
     </div>
   );
 }

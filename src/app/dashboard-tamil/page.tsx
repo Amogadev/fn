@@ -3,7 +3,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,37 +18,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-const StatCard = ({
-  title,
-  value,
-  description,
-  icon: Icon,
-  iconBg,
-  className,
-}: {
-  title: string;
-  value: string;
-  description: string;
-  icon: React.ElementType;
-  iconBg?: string;
-  className?: string;
-}) => (
-  <Card className={cn("flex items-center p-4", className)}>
-    {Icon && (
-      <div
-        className={cn("p-3 mr-4 rounded-lg", iconBg || "bg-gray-200")}
-      >
-        <Icon className="w-6 h-6 text-gray-700" />
-      </div>
-    )}
-    <div>
-      <p className="text-sm text-muted-foreground">{title}</p>
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{description}</p>
-    </div>
-  </Card>
-);
 
 const ActionCard = ({
   title,
@@ -88,7 +56,7 @@ export default function DashboardTamilPage() {
         </div>
       </header>
 
-      <main className="p-6 space-y-8">
+      <main className="p-6 space-y-8 pb-24 md:pb-8">
         <Card className="bg-[#2d3748] text-white">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>
@@ -170,22 +138,17 @@ export default function DashboardTamilPage() {
         </section>
       </main>
 
-       <footer className="fixed inset-x-0 bottom-0 flex items-center justify-between p-2 bg-white border-t md:relative">
-            <div className="flex items-center justify-around flex-grow md:hidden">
+       <footer className="fixed bottom-4 inset-x-4 h-20 bg-white rounded-full shadow-lg md:hidden">
+            <div className="flex items-center justify-around h-full">
                  {navItems.map((item) => (
                     <Link href="#" key={item.label} className={cn(
-                        "flex flex-col items-center justify-center p-2 rounded-lg text-xs",
-                        item.active ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                        "flex flex-col items-center justify-center text-xs w-16",
+                        item.active ? "text-slate-800" : "text-muted-foreground"
                     )}>
-                        <item.icon className="w-5 h-5 mb-1" />
+                        <item.icon className="w-6 h-6 mb-1" />
                         <span>{item.label}</span>
                     </Link>
                 ))}
-            </div>
-             <div className="absolute bottom-16 left-4 md:hidden">
-                <Avatar>
-                    <AvatarFallback>N</AvatarFallback>
-                </Avatar>
             </div>
         </footer>
     </div>

@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ export default function NewDiwaliSchemePage() {
   const [contact, setContact] = useState("");
   const [contribution, setContribution] = useState<string | undefined>();
   const [frequency, setFrequency] = useState<string | undefined>();
+  const [estimatedReturn, setEstimatedReturn] = useState(0);
 
   
   const currentDate = new Date().toLocaleDateString('ta-IN', {
@@ -45,6 +47,28 @@ export default function NewDiwaliSchemePage() {
     month: 'long',
     year: 'numeric',
   });
+
+  useEffect(() => {
+    if (contribution && frequency) {
+      const amount = Number(contribution);
+      const WEEKS_TILL_DIWALI = 44; // Approx 11 months
+      const MONTHS_TILL_DIWALI = 11;
+      const BONUS_RATE = 0.10; // 10%
+
+      let totalContribution = 0;
+      if (frequency === 'weekly') {
+        totalContribution = amount * WEEKS_TILL_DIWALI;
+      } else if (frequency === 'monthly') {
+        totalContribution = amount * MONTHS_TILL_DIWALI;
+      }
+
+      const bonus = totalContribution * BONUS_RATE;
+      setEstimatedReturn(totalContribution + bonus);
+    } else {
+      setEstimatedReturn(0);
+    }
+  }, [contribution, frequency]);
+
 
   const handleSubmit = () => {
     if (!fullName || !contribution || !frequency) {
@@ -64,7 +88,7 @@ export default function NewDiwaliSchemePage() {
         totalSaved: Number(contribution), // Initial contribution
         avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
         joinDate: new Date().toISOString().split('T')[0],
-        estimatedBonus: 0, // Should be calculated later
+        estimatedBonus: (estimatedReturn - (Number(contribution) * (frequency === 'weekly' ? 44 : 11))),
         transactions: [{
             id: `txn_${Date.now()}`,
             date: new Date().toLocaleDateString('ta-IN'),
@@ -212,7 +236,14 @@ export default function NewDiwaliSchemePage() {
                     <CardDescription>உங்கள் மொத்த பங்களிப்பு மற்றும் உங்கள் 10% போனஸ்.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-4xl font-bold">₹0</p>
+                    <p className="text-4xl font-bold">
+                      {new Intl.NumberFormat('ta-IN', {
+                        style: 'currency',
+                        currency: 'INR',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(estimatedReturn)}
+                    </p>
                 </CardContent>
             </Card>
 
@@ -222,3 +253,5 @@ export default function NewDiwaliSchemePage() {
     </TamilAppLayout>
   );
 }
+
+    

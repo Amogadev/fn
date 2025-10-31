@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
@@ -25,16 +26,32 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, doc } from "firebase/firestore";
+import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 
 export default function LoanUsersPage() {
     const { toast } = useToast();
-    const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    const [loanUsers, setLoanUsers] = useLocalStorage<any[]>("loan-users", []);
+    const [currentDate, setCurrentDate] = useState('');
+    const firestore = useFirestore();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+        setCurrentDate(new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' }));
+    }, []);
+
+    const loanUsersQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return collection(firestore, 'loan-users');
+    }, [firestore]);
+    const { data: loanUsers, isLoading } = useCollection(loanUsersQuery);
 
     const handleDeleteUser = (userId: string) => {
-        setLoanUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+        if (!firestore) return;
+        const userDocRef = doc(firestore, 'loan-users', userId);
+        deleteDocumentNonBlocking(userDocRef);
         toast({
             title: "பயனர் நீக்கப்பட்டார்",
             description: "தேர்ந்தெடுக்கப்பட்ட பயனர் வெற்றிகரமாக நீக்கப்பட்டார்.",
@@ -94,12 +111,17 @@ export default function LoanUsersPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {loanUsers.length === 0 ? (
+          {isLoading && (
+            <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
+            </div>
+          )}
+          {!isLoading && loanUsers && loanUsers.length === 0 ? (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
             </div>
           ) : (
-            loanUsers.map((user) => (
+            loanUsers && loanUsers.map((user) => (
               <Card key={user.id} className="flex flex-col text-center">
                 <CardContent className="flex-1 p-6 space-y-4">
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">

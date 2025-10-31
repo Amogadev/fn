@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
@@ -6,15 +7,25 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useDoc, useFirestore, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 
 export default function LoanUserDetailPage({ params }: { params: { id: string } }) {
-    const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
-    const user = loanUsers.find(u => u.id === params.id);
+    const firestore = useFirestore();
+    const userDocRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, 'loan-users', params.id);
+    }, [firestore, params.id]);
+
+    const { data: user, isLoading } = useDoc(userDocRef);
+
+    if (isLoading) {
+        return <TamilAppLayout><div>Loading...</div></TamilAppLayout>;
+    }
 
     if (!user) {
         return notFound();
@@ -92,11 +103,11 @@ export default function LoanUserDetailPage({ params }: { params: { id: string } 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {user.transactions.length === 0 ? (
+                                {user.transactions && user.transactions.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
                                     </TableRow>
-                                ) : user.transactions.map((tx: any) => (
+                                ) : user.transactions && user.transactions.map((tx: any) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>

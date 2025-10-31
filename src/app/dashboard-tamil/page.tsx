@@ -33,7 +33,6 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
 
@@ -81,13 +80,19 @@ const navItems = [
 export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+  const firestore = useFirestore();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     setIsDarkMode(theme === 'dark');
   }, [theme]);
   
-  const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
-  const firestore = useFirestore();
+  const loanUsersQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'loan-users');
+  }, [firestore]);
+  const { data: loanUsers } = useCollection(loanUsersQuery);
 
   const diwaliUsersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -105,31 +110,31 @@ export default function DashboardTamilPage() {
   });
 
   const [currentDate, setCurrentDate] = useState('');
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
     setCurrentDate(new Date().toLocaleDateString('ta-IN', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }));
 
-    const initialVaultBalance = 100000;
-    const loanUsersCount = loanUsers.length;
-    const diwaliUsersCount = diwaliUsers?.length || 0;
-  
-    const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
-    const totalDiwaliSavings = diwaliUsers?.reduce((acc, user) => acc + (user.totalSaved || 0), 0) || 0;
-    const totalCashOnHand = initialVaultBalance - totalLoansGiven + totalDiwaliSavings;
+    if (loanUsers && diwaliUsers) {
+      const initialVaultBalance = 100000;
+      const loanUsersCount = loanUsers.length;
+      const diwaliUsersCount = diwaliUsers.length;
     
-    setDashboardData({
-        totalCashOnHand,
-        totalLoansGiven,
-        loanUsersCount,
-        totalDiwaliSavings,
-        diwaliUsersCount,
-    })
+      const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
+      const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
+      const totalCashOnHand = initialVaultBalance - totalLoansGiven + totalDiwaliSavings;
+      
+      setDashboardData({
+          totalCashOnHand,
+          totalLoansGiven,
+          loanUsersCount,
+          totalDiwaliSavings,
+          diwaliUsersCount,
+      })
+    }
 
   }, [loanUsers, diwaliUsers]);
 
@@ -153,7 +158,7 @@ export default function DashboardTamilPage() {
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight font-headline">வணக்கம்.</h1>
           <div className="text-right">
-            <p className="text-lg font-semibold">{currentDate}</p>
+            <p className="text-lg font-semibold">{isClient ? currentDate : '...'}</p>
           </div>
         </header>
 

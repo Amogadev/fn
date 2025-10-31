@@ -24,15 +24,17 @@ import {
 } from "@/components/ui/alert";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 import { CameraCapture } from "@/components/CameraCapture";
 import { cn } from "@/lib/utils";
 
 export default function NewLoanTamilPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const firestore = useFirestore();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [loanUsers, setLoanUsers] = useLocalStorage<any[]>("loan-users", []);
 
   // Form state
   const [fullName, setFullName] = useState("");
@@ -77,7 +79,6 @@ export default function NewLoanTamilPage() {
     }
 
     const userToCreate = {
-      id: `user_${Date.now()}`,
       name: fullName,
       loanAmount: 0,
       paidAmount: 0,
@@ -96,7 +97,7 @@ export default function NewLoanTamilPage() {
   };
 
   const handleFinalSubmit = () => {
-    if (!newUser || loanAmount <= 0) {
+    if (!firestore || !newUser || loanAmount <= 0) {
         toast({
             variant: "destructive",
             title: "தகவல் இல்லை",
@@ -117,7 +118,8 @@ export default function NewLoanTamilPage() {
         }]
     };
     
-    setLoanUsers([...loanUsers, finalUserData]);
+    const loanUsersCollection = collection(firestore, 'loan-users');
+    addDocumentNonBlocking(loanUsersCollection, finalUserData);
 
     toast({
         title: "பயனர் சேர்க்கப்பட்டார்!",
@@ -310,5 +312,3 @@ export default function NewLoanTamilPage() {
     </TamilAppLayout>
     );
 }
-
-    

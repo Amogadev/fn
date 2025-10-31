@@ -158,7 +158,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
                   <Select value={frequency} onValueChange={setFrequency}>
                       <SelectTrigger>
                           <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
-                      </SelectTrigger>
+                      </Trigger>
                       <SelectContent>
                           <SelectItem value="weekly">வாராந்திர</SelectItem>
                           <SelectItem value="monthly">மாதாந்திர</SelectItem>

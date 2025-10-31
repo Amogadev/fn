@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -73,7 +74,7 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
 
   return (
     <div className="flex flex-col items-center w-full gap-2">
-      <div className="relative w-full overflow-hidden border rounded-lg aspect-video bg-muted max-w-sm">
+      <div className="relative w-full overflow-hidden border rounded-lg aspect-video bg-muted max-w-xs">
         {capturedImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -92,8 +93,8 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
         )}
         {!stream && !capturedImage && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <Camera className="w-10 h-10 mb-2 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Camera is off</p>
+            <Camera className="w-8 h-8 mb-2 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">கேமரா ஆஃப் செய்யப்பட்டுள்ளது</p>
           </div>
         )}
       </div>
@@ -101,7 +102,7 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
         {!stream && !capturedImage && (
           <Button onClick={startCamera} size="sm">
             <Camera className="w-4 h-4 mr-2" />
-            Start Camera
+            கேமராவைத் திற
           </Button>
         )}
         {stream && (

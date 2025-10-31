@@ -204,7 +204,7 @@ export default function NewDiwaliSchemePage() {
                  <div className="space-y-4 lg:col-span-1">
                      <Card>
                         <CardHeader>
-                            <CardTitle>முகப் புகைப்படம் (விருப்பத்தேர்வு)</CardTitle>
+                            <CardTitle>முகப் புகைப்படம்</CardTitle>
                             <CardDescription>ஒரு தெளிவான படத்தைப் பிடிக்கவும்</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center space-y-4">

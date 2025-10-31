@@ -1,0 +1,314 @@
+{
+  "entities": {
+    "Vault": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Vault",
+      "type": "object",
+      "description": "Represents the main vault holding the available balance and financial summaries.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the vault entity."
+        },
+        "totalBalance": {
+          "type": "number",
+          "description": "The total available balance in the vault."
+        },
+        "totalLoansGiven": {
+          "type": "number",
+          "description": "The total amount of loans given out."
+        },
+        "totalInterestEarned": {
+          "type": "number",
+          "description": "The total amount of interest earned from loans."
+        }
+      },
+      "required": [
+        "id",
+        "totalBalance",
+        "totalLoansGiven",
+        "totalInterestEarned"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user who can apply for loans or EMIs.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the user."
+        },
+        "contact": {
+          "type": "string",
+          "description": "The contact information of the user (e.g., phone number, email)."
+        },
+        "identification": {
+          "type": "string",
+          "description": "The ID or identification number of the user."
+        },
+        "faceImageURL": {
+          "type": "string",
+          "description": "URL of the user's face image stored in Firebase Storage."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "contact",
+        "identification",
+        "faceImageURL"
+      ]
+    },
+    "Loan": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Loan",
+      "type": "object",
+      "description": "Represents a loan or EMI application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the loan entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Loan)"
+        },
+        "amountRequested": {
+          "type": "number",
+          "description": "The amount requested by the user."
+        },
+        "loanType": {
+          "type": "string",
+          "description": "The type of loan (Loan or EMI)."
+        },
+        "paymentFrequency": {
+          "type": "string",
+          "description": "The payment frequency (Daily, Weekly, Monthly, Yearly)."
+        },
+        "interestRate": {
+          "type": "number",
+          "description": "The interest rate applied to the loan."
+        },
+        "vaultId": {
+          "type": "string",
+          "description": "Reference to Vault. (Relationship: Vault 1:N Loan)"
+        },
+        "loanDate": {
+          "type": "string",
+          "description": "The date the loan was given.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "amountRequested",
+        "loanType",
+        "paymentFrequency",
+        "interestRate",
+        "vaultId",
+        "loanDate"
+      ]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Represents a record of a loan transaction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the transaction entity."
+        },
+        "loanId": {
+          "type": "string",
+          "description": "Reference to Loan. (Relationship: Loan 1:N Transaction)"
+        },
+        "transactionType": {
+          "type": "string",
+          "description": "The type of transaction (e.g., loan disbursement, repayment)."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the transaction."
+        },
+        "transactionDate": {
+          "type": "string",
+          "description": "The date and time of the transaction.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "loanId",
+        "transactionType",
+        "amount",
+        "transactionDate"
+      ]
+    },
+    "Repayment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Repayment",
+      "type": "object",
+      "description": "Represents a repayment made by a user towards a loan.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the repayment entity."
+        },
+        "loanId": {
+          "type": "string",
+          "description": "Reference to Loan. (Relationship: Loan 1:N Repayment)"
+        },
+        "amountPaid": {
+          "type": "number",
+          "description": "The amount paid in the repayment."
+        },
+        "repaymentDate": {
+          "type": "string",
+          "description": "The date of the repayment.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "loanId",
+        "amountPaid",
+        "repaymentDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/vaults/{vaultId}",
+        "definition": {
+          "entityName": "Vault",
+          "schema": {
+            "$ref": "#/backend/entities/Vault"
+          },
+          "description": "Stores vault information. The `vaultId` is the document ID.",
+          "params": [
+            {
+              "name": "vaultId",
+              "description": "The unique ID of the vault."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user information. The `userId` is the Firebase Auth UID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/loans/{loanId}",
+        "definition": {
+          "entityName": "Loan",
+          "schema": {
+            "$ref": "#/backend/entities/Loan"
+          },
+          "description": "Stores loan information for each user. `userId` is the owner. `loanId` is the document ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "loanId",
+              "description": "The unique ID of the loan."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/loans/{loanId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "Transaction",
+          "schema": {
+            "$ref": "#/backend/entities/Transaction"
+          },
+          "description": "Stores transaction information for each loan. `userId` is the owner via the parent loan. `transactionId` is the document ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "loanId",
+              "description": "The unique ID of the loan."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique ID of the transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/loans/{loanId}/repayments/{repaymentId}",
+        "definition": {
+          "entityName": "Repayment",
+          "schema": {
+            "$ref": "#/backend/entities/Repayment"
+          },
+          "description": "Stores repayment information for each loan. `userId` is the owner via the parent loan. `repaymentId` is the document ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "loanId",
+              "description": "The unique ID of the loan."
+            },
+            {
+              "name": "repaymentId",
+              "description": "The unique ID of the repayment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "roles_admin",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Indicates the user is an admin. Existence of the document grants admin privileges.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. Authorization independence is achieved through denormalization of authorization data. Data segregation ensures that collections have homogeneous security postures, and access modeling provides a consistent approach to authorization. The structure includes paths for users, vaults, loans, transactions, and repayments, ensuring comprehensive coverage of the LendEase application's data requirements. \n\nVaults are stored in a top-level collection. Each vault document contains financial summary data. Users are stored in a top-level collection, with user documents containing personal information. Loans are stored as subcollections of users (`/users/{userId}/loans/{loanId}`), enabling path-based ownership. Transactions and Repayments are stored as subcollections of Loans (`/users/{userId}/loans/{loanId}/transactions/{transactionId}` and `/users/{userId}/loans/{loanId}/repayments/{repaymentId}`), thus maintaining clear ownership and enabling efficient querying. This structure facilitates secure `list` operations because security rules can be applied at the collection level based on the user ID. The admin role is managed via the `/roles_admin/{userId}` document, allowing for role-based access control without relying on custom claims."
+  }
+}

@@ -78,7 +78,6 @@ const navItems = [
     { href: "/dashboard-tamil", label: "முகப்பு", icon: LayoutGrid },
     { href: "/loans/users-tamil", label: "கடன் விவரங்கள்", icon: Users2 },
     { href: "/diwali-scheme/users-tamil", label: "தீபாவளி சிட்", icon: Gift },
-    { href: "#", label: "அறிக்கைகள்", icon: BarChart },
 ];
 
 

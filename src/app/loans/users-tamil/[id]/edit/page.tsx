@@ -28,9 +28,9 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   const { user: authUser, isUserLoading } = useUser();
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
+    if (!firestore || !params.id || !authUser) return null;
     return doc(firestore, 'loan-users', params.id);
-  }, [firestore, params.id]);
+  }, [firestore, params.id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
@@ -100,7 +100,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
     return <TamilAppLayout><div>ஏற்றுகிறது...</div></TamilAppLayout>;
   }
 
-  if (!user) {
+  if (!user && !isLoading) {
     return notFound();
   }
 
@@ -137,7 +137,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
              <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">
                     <Label htmlFor="loan-amount">மொத்த கடன்</Label>
-                    <Input id="loan-amount" value={user.loanAmount} disabled />
+                    <Input id="loan-amount" value={user?.loanAmount || ''} disabled />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="paid-amount">செலுத்திய தொகை</Label>

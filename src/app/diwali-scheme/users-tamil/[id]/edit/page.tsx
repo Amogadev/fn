@@ -35,9 +35,9 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
   const { user: authUser, isUserLoading } = useUser();
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
+    if (!firestore || !params.id || !authUser) return null;
     return doc(firestore, 'diwali-users', params.id);
-  }, [firestore, params.id]);
+  }, [firestore, params.id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
@@ -104,7 +104,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
     return <TamilAppLayout><div>ஏற்றுகிறது...</div></TamilAppLayout>;
   }
 
-  if (!user) {
+  if (!user && !isLoading) {
     return notFound();
   }
 

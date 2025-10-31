@@ -43,6 +43,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 type DiwaliUser = {
     id: string;
@@ -211,7 +212,97 @@ export default function DiwaliSchemeUsersPage() {
             </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+            <Card>
+                <CardContent className="p-0">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>பயனர்</TableHead>
+                                <TableHead>பங்களிப்பு</TableHead>
+                                <TableHead>மொத்த சேமிப்பு</TableHead>
+                                <TableHead>நிலை</TableHead>
+                                <TableHead className="text-right">செயல்கள்</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                             {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="h-24 text-center">
+                                        பயனர்களை ஏற்றுகிறது...
+                                    </TableCell>
+                                </TableRow>
+                            ) : diwaliSchemeUsers && diwaliSchemeUsers.length > 0 ? (
+                                diwaliSchemeUsers.map((user) => (
+                                    <TableRow key={user.id}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-9 w-9">
+                                                    <AvatarImage src={user.avatarUrl} alt={user.name} />
+                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <span className="font-medium">{user.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{formatCurrency(user.contribution)} / {user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'}</TableCell>
+                                        <TableCell className="font-medium">{formatCurrency(user.totalSaved)}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="secondary">செயலில்</Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button variant="outline" size="icon" onClick={(e) => handleAddPaymentClick(e, user)}>
+                                                    <Plus className="h-4 w-4" />
+                                                </Button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem onClick={() => handleCardClick(user)}>
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            பரிவர்த்தனைகளைப் பார்க்க
+                                                        </DropdownMenuItem>
+                                                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
+                                                            <DropdownMenuItem>
+                                                                <FilePenLine className="mr-2 h-4 w-4" />
+                                                                திருத்து
+                                                            </DropdownMenuItem>
+                                                        </Link>
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleDelete(user.id, user.name)}
+                                                            className="text-destructive"
+                                                        >
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            நீக்கு
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="h-24 text-center">
+                                        பயனர்கள் யாரும் இல்லை.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </div>
+
+
+        {/* Mobile Card View */}
+        <div className="grid gap-4 md:hidden">
           {isLoading && (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
@@ -223,14 +314,14 @@ export default function DiwaliSchemeUsersPage() {
             </div>
           ) : (
             diwaliSchemeUsers && diwaliSchemeUsers.map((user) => (
-              <Card key={user.id} className="flex flex-col text-center cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleCardClick(user)}>
-                 <CardContent className="flex-1 p-6 space-y-4">
+              <Card key={user.id} className="flex flex-col text-center">
+                 <CardContent className="flex-1 p-6 space-y-4" onClick={() => handleCardClick(user)}>
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
                         <AvatarImage src={user.avatarUrl} alt={user.name}/>
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <h3 className="text-xl font-semibold">{user.name}</h3>
-                    <div className="space-y-1 text-sm">
+                    <div className="space-y-1 text-sm text-left">
                         <div className="flex justify-between"><span>பங்களிப்பு:</span> <span className="font-medium">{formatCurrency(user.contribution)} ({user.frequency === 'weekly' ? 'வாராந்திர' : 'மாதாந்திர'})</span></div>
                         <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{formatCurrency(user.totalSaved)}</span></div>
                     </div>
@@ -249,12 +340,10 @@ export default function DiwaliSchemeUsersPage() {
                             <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
-                                    <DropdownMenuItem>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        <span>பார்வை</span>
-                                    </DropdownMenuItem>
-                                </Link>
+                                <DropdownMenuItem onClick={() => handleCardClick(user)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    <span>பரிவர்த்தனைகளைப் பார்க்க</span>
+                                </DropdownMenuItem>
                                 <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
                                      <DropdownMenuItem>
                                         <FilePenLine className="mr-2 h-4 w-4" />
@@ -278,7 +367,7 @@ export default function DiwaliSchemeUsersPage() {
       {/* Transactions Modal */}
       {transactionsUser && (
         <Dialog open={!!transactionsUser} onOpenChange={(isOpen) => !isOpen && setTransactionsUser(null)}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{transactionsUser.name} - பரிவர்த்தனை வரலாறு</DialogTitle>
                     <DialogDescription>
@@ -355,3 +444,5 @@ export default function DiwaliSchemeUsersPage() {
   );
 }
  
+
+    

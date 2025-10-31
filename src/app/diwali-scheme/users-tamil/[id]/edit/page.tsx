@@ -106,7 +106,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
   }
 
   if (!user && !isLoading) {
-    return notFound();
+    notFound();
   }
 
   return (

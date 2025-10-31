@@ -77,15 +77,17 @@ function buildAuthObject(currentUser: User | null): FirebaseAuthObject | null {
 function buildRequestObject(context: SecurityRuleContext): SecurityRuleRequest {
   let authObject: FirebaseAuthObject | null = null;
   try {
-    // Safely attempt to get the current user.
     const firebaseAuth = getAuth();
-    const currentUser = firebaseAuth.currentUser;
-    if (currentUser) {
-      authObject = buildAuthObject(currentUser);
+    if (firebaseAuth.app) { // Ensure the app is initialized
+        const currentUser = firebaseAuth.currentUser;
+        if (currentUser) {
+            authObject = buildAuthObject(currentUser);
+        }
     }
-  } catch {
+  } catch (e) {
     // This will catch errors if the Firebase app is not yet initialized.
     // In this case, we'll proceed without auth information.
+    console.warn('Could not determine auth state for FirestorePermissionError:', e);
   }
 
   return {

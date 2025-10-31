@@ -27,6 +27,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   const firestore = useFirestore();
   const { user: authUser, isUserLoading } = useUser();
   const [currentDate, setCurrentDate] = useState('');
+  const id = params.id;
 
   useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString('ta-IN', {
@@ -37,9 +38,9 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   }, []);
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id || !authUser) return null;
-    return doc(firestore, 'loan-users', params.id);
-  }, [firestore, params.id, authUser]);
+    if (!firestore || !id || !authUser) return null;
+    return doc(firestore, 'loan-users', id);
+  }, [firestore, id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

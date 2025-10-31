@@ -33,11 +33,12 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
   const router = useRouter();
   const firestore = useFirestore();
   const { user: authUser, isUserLoading } = useUser();
+  const id = params.id;
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id || !authUser) return null;
-    return doc(firestore, 'diwali-users', params.id);
-  }, [firestore, params.id, authUser]);
+    if (!firestore || !id || !authUser) return null;
+    return doc(firestore, 'diwali-users', id);
+  }, [firestore, id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

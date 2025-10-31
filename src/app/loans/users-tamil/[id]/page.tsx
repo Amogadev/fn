@@ -17,7 +17,7 @@ import { notFound } from "next/navigation";
 export default function LoanUserDetailPage({ params }: { params: { id: string } }) {
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
-    const { id } = params;
+    const id = params.id;
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !authUser || !id) return null;

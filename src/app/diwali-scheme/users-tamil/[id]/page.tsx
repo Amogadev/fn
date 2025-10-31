@@ -16,11 +16,12 @@ import { notFound } from "next/navigation";
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
+    const id = params.id;
     
     const userDocRef = useMemoFirebase(() => {
-        if (!firestore || !authUser || !params.id) return null;
-        return doc(firestore, 'diwali-users', params.id);
-    }, [firestore, authUser, params.id]);
+        if (!firestore || !authUser || !id) return null;
+        return doc(firestore, 'diwali-users', id);
+    }, [firestore, authUser, id]);
 
     const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

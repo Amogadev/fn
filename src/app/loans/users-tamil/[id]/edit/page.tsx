@@ -22,6 +22,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
 export default function EditLoanUserPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
@@ -37,13 +38,15 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   }, []);
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id || !authUser) return null;
-    return doc(firestore, 'loan-users', params.id);
-  }, [firestore, params.id, authUser]);
+    if (!firestore || !id || !authUser) return null;
+    return doc(firestore, 'loan-users', id);
+  }, [firestore, id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
   const [fullName, setFullName] = useState("");
+  const [contact, setContact] = useState("");
+  const [idProof, setIdProof] = useState("");
   const [loanAmount, setLoanAmount] = useState<number | string>("");
   const [paidAmount, setPaidAmount] = useState<number | string>("");
 
@@ -53,6 +56,9 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
       setFullName(user.name);
       setLoanAmount(user.loanAmount);
       setPaidAmount(user.paidAmount);
+      // Assuming these fields might exist on the user object from creation step
+      setContact(user.contact || "");
+      setIdProof(user.idProof || "");
     }
   }, [user]);
 
@@ -69,6 +75,8 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
     try {
       await updateDoc(userDocRef, {
         name: fullName,
+        contact: contact,
+        idProof: idProof,
         loanAmount: Number(loanAmount),
         paidAmount: Number(paidAmount)
       });
@@ -92,7 +100,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   const isLoading = isUserLoading || isDocLoading;
 
   if (isLoading) {
-    return <TamilAppLayout><div>ஏற்றுகிறது...</div></TamilAppLayout>;
+    return <TamilAppLayout showFloatingNav><div>ஏற்றுகிறது...</div></TamilAppLayout>;
   }
 
   if (!user && !isLoading) {
@@ -100,7 +108,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   }
 
   return (
-    <TamilAppLayout>
+    <TamilAppLayout showFloatingNav>
       <div className="space-y-6">
         <header className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -147,6 +155,26 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contact-number">தொடர்பு எண்</Label>
+                <Input
+                  id="contact-number"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  placeholder="பயனர் தொடர்பு"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="id-proof">அடையாளச் சான்று</Label>
+                <Input
+                  id="id-proof"
+                  value={idProof}
+                  onChange={(e) => setIdProof(e.target.value)}
+                  placeholder="பயனர் அடையாளச் சான்று"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

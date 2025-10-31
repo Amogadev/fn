@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
@@ -114,6 +115,23 @@ export default function DiwaliSchemeUsersPage() {
                         <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{formatCurrency(user.totalSaved)}</span></div>
                     </div>
                  </CardContent>
+                 <CardFooter className="p-2 border-t bg-muted/20">
+                    <div className="flex justify-around w-full">
+                        <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon" title="பயனரைக் காண்க">
+                                <Eye className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                        </Link>
+                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon" title="பயனரைத் திருத்து">
+                                <FilePenLine className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" size="icon" title="பயனரை நீக்கு">
+                            <Trash2 className="w-5 h-5 text-destructive" />
+                        </Button>
+                    </div>
+                </CardFooter>
               </Card>
             ))
           )}

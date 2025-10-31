@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -122,6 +123,23 @@ export default function LoanUsersPage() {
                         </div>
                     )}
                 </CardContent>
+                <CardFooter className="p-2 border-t bg-muted/20">
+                    <div className="flex justify-around w-full">
+                        <Link href={`/loans/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon" title="View User">
+                                <Eye className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                        </Link>
+                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon" title="Edit User">
+                                <FilePenLine className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" size="icon" title="Delete User">
+                            <Trash2 className="w-5 h-5 text-destructive" />
+                        </Button>
+                    </div>
+                </CardFooter>
               </Card>
             ))
           )}

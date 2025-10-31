@@ -14,14 +14,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 
-export default function LoanUserDetailPage({ params: { id } }: { params: { id: string } }) {
+export default function LoanUserDetailPage({ params }: { params: { id: string } }) {
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
 
     const userDocRef = useMemoFirebase(() => {
-        if (!firestore || !authUser || !id) return null;
-        return doc(firestore, 'loan-users', id);
-    }, [firestore, authUser, id]);
+        if (!firestore || !authUser || !params.id) return null;
+        return doc(firestore, 'loan-users', params.id);
+    }, [firestore, authUser, params.id]);
 
     const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

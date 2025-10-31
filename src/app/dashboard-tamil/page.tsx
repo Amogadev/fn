@@ -18,6 +18,8 @@ import {
   Settings,
   Sun,
   LogOut,
+  Landmark,
+  PiggyBank,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -33,7 +35,7 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection } from "firebase/firestore";
 
 const ActionCard = ({
@@ -81,6 +83,7 @@ export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -89,20 +92,21 @@ export default function DashboardTamilPage() {
   }, [theme]);
   
   const loanUsersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return collection(firestore, 'loan-users');
-  }, [firestore]);
-  const { data: loanUsers } = useCollection(loanUsersQuery);
+  }, [firestore, user]);
+  const { data: loanUsers, isLoading: loanUsersLoading } = useCollection(loanUsersQuery);
 
   const diwaliUsersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return collection(firestore, 'diwali-users');
-  }, [firestore]);
+  }, [firestore, user]);
 
-  const { data: diwaliUsers } = useCollection(diwaliUsersQuery);
+  const { data: diwaliUsers, isLoading: diwaliUsersLoading } = useCollection(diwaliUsersQuery);
   
   const [dashboardData, setDashboardData] = useState({
-      totalCashOnHand: 0,
+      loanWallet: 0,
+      diwaliWallet: 0,
       totalLoansGiven: 0,
       loanUsersCount: 0,
       totalDiwaliSavings: 0,
@@ -119,16 +123,19 @@ export default function DashboardTamilPage() {
       }));
 
     if (loanUsers && diwaliUsers) {
-      const initialVaultBalance = 100000;
+      const initialLoanCapital = 100000;
       const loanUsersCount = loanUsers.length;
       const diwaliUsersCount = diwaliUsers.length;
     
       const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
       const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
-      const totalCashOnHand = initialVaultBalance - totalLoansGiven + totalDiwaliSavings;
       
+      const loanWallet = initialLoanCapital - totalLoansGiven;
+      const diwaliWallet = totalDiwaliSavings;
+
       setDashboardData({
-          totalCashOnHand,
+          loanWallet,
+          diwaliWallet,
           totalLoansGiven,
           loanUsersCount,
           totalDiwaliSavings,
@@ -151,6 +158,8 @@ export default function DashboardTamilPage() {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+  
+  const isLoading = isUserLoading || loanUsersLoading || diwaliUsersLoading;
 
   return (
     <TamilAppLayout>
@@ -205,22 +214,38 @@ export default function DashboardTamilPage() {
                 </nav>
             </CardContent>
         </Card>
-          
-        <Card className="bg-primary text-primary-foreground">
-            <CardHeader className="flex flex-row items-start justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium">
-                  மொத்த கை இருப்பு
-                </CardTitle>
-                 {isClient ? (
-                    <p className="text-4xl font-bold">{formatCurrency(dashboardData.totalCashOnHand)}</p>
-                 ) : (
-                    <p className="text-4xl font-bold">₹...</p>
-                 )}
-              </div>
-              <Copy className="cursor-pointer" />
-            </CardHeader>
-        </Card>
+        
+        <div className="grid gap-4 md:grid-cols-2">
+            <Card className="bg-primary text-primary-foreground">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">கடன் நிதி</CardTitle>
+                    <Landmark className="w-5 h-5 text-primary-foreground/80"/>
+                </CardHeader>
+                <CardContent>
+                    {isLoading ? (
+                        <p className="text-4xl font-bold">₹...</p>
+                    ) : (
+                        <p className="text-4xl font-bold">{formatCurrency(dashboardData.loanWallet)}</p>
+                    )}
+                    <p className="text-xs text-primary-foreground/80 mt-1">கடன் வழங்குவதற்கு கிடைக்கும் இருப்பு</p>
+                </CardContent>
+            </Card>
+            <Card className="bg-secondary text-secondary-foreground">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">தீபாவளி நிதி</CardTitle>
+                    <PiggyBank className="w-5 h-5 text-secondary-foreground/80"/>
+                </CardHeader>
+                <CardContent>
+                    {isLoading ? (
+                        <p className="text-4xl font-bold">₹...</p>
+                    ) : (
+                        <p className="text-4xl font-bold">{formatCurrency(dashboardData.diwaliWallet)}</p>
+                    )}
+                    <p className="text-xs text-secondary-foreground/80 mt-1">மொத்த சேமிப்பு வசூல்</p>
+                </CardContent>
+            </Card>
+        </div>
+
 
         <section>
           <h2 className="text-2xl font-semibold mb-4 font-headline">கடன்</h2>
@@ -237,10 +262,10 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   வழங்கப்பட்ட மொத்தக் கடன்கள்
                 </p>
-                 {isClient ? (
-                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalLoansGiven)}</p>
-                 ) : (
+                 {isLoading ? (
                     <p className="text-3xl font-bold">₹...</p>
+                 ) : (
+                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalLoansGiven)}</p>
                  )}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -252,7 +277,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   மொத்த கடன் பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">{isClient ? dashboardData.loanUsersCount : '...'}</p>
+                <p className="text-3xl font-bold">{isLoading ? '...' : dashboardData.loanUsersCount}</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 கடன் பெற்ற பயனர்கள்
@@ -274,10 +299,10 @@ export default function DashboardTamilPage() {
             <Card className="flex flex-col justify-between p-6">
               <div>
                 <p className="text-sm text-muted-foreground">மொத்த சேமிப்பு</p>
-                {isClient ? (
-                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalDiwaliSavings)}</p>
-                ) : (
+                {isLoading ? (
                     <p className="text-3xl font-bold">₹...</p>
+                ) : (
+                    <p className="text-3xl font-bold">{formatCurrency(dashboardData.totalDiwaliSavings)}</p>
                 )}
               </div>
                <p className="text-xs text-muted-foreground mt-2">பயனர்கள் சேமித்தவை</p>
@@ -287,7 +312,7 @@ export default function DashboardTamilPage() {
                 <p className="text-sm text-muted-foreground">
                   சேமிப்புத் திட்ட பயனர்கள்
                 </p>
-                <p className="text-3xl font-bold">{isClient ? dashboardData.diwaliUsersCount : '...'}</p>
+                <p className="text-3xl font-bold">{isLoading ? '...' : dashboardData.diwaliUsersCount}</p>
               </div>
                <p className="text-xs text-muted-foreground mt-2">
                 திட்டத்தில் பங்கேற்கும் பயனர்கள்
@@ -299,3 +324,5 @@ export default function DashboardTamilPage() {
     </TamilAppLayout>
   );
 }
+
+    

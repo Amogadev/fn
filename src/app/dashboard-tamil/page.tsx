@@ -176,7 +176,7 @@ export default function DashboardTamilPage() {
     <TamilAppLayout>
       <div className="space-y-8">
         <header className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight font-headline">லக்கி சிட் பண்ட்</h1>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">லக்கி</h1>
           <div className="text-right">
             <p className="text-lg font-semibold">{isClient ? currentDate : '...'}</p>
           </div>

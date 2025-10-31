@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -111,76 +112,127 @@ export default function LoanUsersPage() {
             </div>
         </div>
 
-        <Card>
-            <CardContent className="p-0">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>பயனர்</TableHead>
-                            <TableHead>மொத்த கடன்</TableHead>
-                            <TableHead>செலுத்தியது</TableHead>
-                            <TableHead>நிலுவை</TableHead>
-                            <TableHead>நிலை</TableHead>
-                            <TableHead className="text-right">செயல்கள்</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+            <Card>
+                <CardContent className="p-0">
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
-                                    பயனர்களை ஏற்றுகிறது...
-                                </TableCell>
+                                <TableHead>பயனர்</TableHead>
+                                <TableHead>மொத்த கடன்</TableHead>
+                                <TableHead>செலுத்தியது</TableHead>
+                                <TableHead>நிலுவை</TableHead>
+                                <TableHead>நிலை</TableHead>
+                                <TableHead className="text-right">செயல்கள்</TableHead>
                             </TableRow>
-                        ) : loanUsers && loanUsers.length > 0 ? (
-                            loanUsers.map((user) => (
-                                <TableRow key={user.id}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-9 w-9">
-                                                <AvatarImage src={user.avatarUrl} alt={user.name} />
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-medium">{user.name}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{formatCurrency(user.loanAmount)}</TableCell>
-                                    <TableCell>{formatCurrency(user.paidAmount)}</TableCell>
-                                    <TableCell className="font-medium">{formatCurrency(user.loanAmount - user.paidAmount)}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={user.status === 'முடிந்தது' ? 'default' : 'secondary'}>
-                                            {user.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Link href={`/loans/users-tamil/${user.id}`}>
-                                                <Button variant="ghost" size="icon">
-                                                    <Eye className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
-                                            <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                                                <Button variant="ghost" size="icon">
-                                                    <FilePenLine className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
-                                            <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
-                                                <Trash2 className="h-4 w-4 text-destructive" />
-                                            </Button>
-                                        </div>
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-24 text-center">
+                                        பயனர்களை ஏற்றுகிறது...
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
-                                    பயனர்கள் யாரும் இல்லை.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+                            ) : loanUsers && loanUsers.length > 0 ? (
+                                loanUsers.map((user) => (
+                                    <TableRow key={user.id}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-9 w-9">
+                                                    <AvatarImage src={user.avatarUrl} alt={user.name} />
+                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <span className="font-medium">{user.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{formatCurrency(user.loanAmount)}</TableCell>
+                                        <TableCell>{formatCurrency(user.paidAmount)}</TableCell>
+                                        <TableCell className="font-medium">{formatCurrency(user.loanAmount - user.paidAmount)}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={user.status === 'முடிந்தது' ? 'default' : 'secondary'}>
+                                                {user.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Link href={`/loans/users-tamil/${user.id}`}>
+                                                    <Button variant="ghost" size="icon">
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                                                    <Button variant="ghost" size="icon">
+                                                        <FilePenLine className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
+                                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-24 text-center">
+                                        பயனர்கள் யாரும் இல்லை.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="grid gap-4 md:hidden">
+          {isLoading && (
+            <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
+            </div>
+          )}
+          {!isLoading && loanUsers && loanUsers.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
+            </div>
+          ) : (
+            loanUsers && loanUsers.map((user) => (
+              <Card key={user.id} className="flex flex-col text-center">
+                 <CardContent className="flex-1 p-6 space-y-4">
+                    <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
+                        <AvatarImage src={user.avatarUrl} alt={user.name}/>
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <h3 className="text-xl font-semibold">{user.name}</h3>
+                    <div className="space-y-1 text-sm text-left">
+                        <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{formatCurrency(user.loanAmount)}</span></div>
+                        <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{formatCurrency(user.paidAmount)}</span></div>
+                        <div className="flex justify-between font-bold"><span>நிலுவை:</span> <span>{formatCurrency(user.loanAmount - user.paidAmount)}</span></div>
+                    </div>
+                 </CardContent>
+                 <CardFooter className="p-2 border-t bg-muted/20">
+                    <div className="flex justify-around w-full">
+                        <Link href={`/loans/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon">
+                                <Eye className="h-5 w-5" />
+                            </Button>
+                        </Link>
+                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon">
+                                <FilePenLine className="h-5 w-5" />
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
+                            <Trash2 className="h-5 w-5 text-destructive" />
+                        </Button>
+                    </div>
+                </CardFooter>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
     </TamilAppLayout>
   );

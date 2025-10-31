@@ -30,8 +30,14 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export default function DiwaliSchemeUsersPage() {
   const { toast } = useToast();
-  const currentDate = new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const [currentDate, setCurrentDate] = useState('');
   const [diwaliSchemeUsers, setDiwaliSchemeUsers] = useLocalStorage<any[]>("diwali-users", []);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setCurrentDate(new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' }));
+  }, []);
   
   const handleDeleteUser = (userId: string) => {
     setDiwaliSchemeUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
@@ -94,7 +100,11 @@ export default function DiwaliSchemeUsersPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {diwaliSchemeUsers.length === 0 ? (
+          {!isClient ? (
+            <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
+            </div>
+          ) : diwaliSchemeUsers.length === 0 ? (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
             </div>

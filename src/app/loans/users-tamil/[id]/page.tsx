@@ -1,6 +1,7 @@
 
 "use client";
 
+import { use } from "react";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,7 @@ import { notFound } from "next/navigation";
 
 
 export default function LoanUserDetailPage({ params }: { params: { id: string } }) {
-    const id = params.id;
+    const { id } = use(Promise.resolve(params));
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
 

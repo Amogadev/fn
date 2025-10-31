@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
 export default function EditLoanUserPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const { id } = use(Promise.resolve(params));
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();

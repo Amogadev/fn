@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
@@ -111,7 +112,7 @@ export default function DashboardTamilPage() {
   
     const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
     const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
-    const totalCashOnHand = initialVaultBalance - totalLoansGiven;
+    const totalCashOnHand = initialVaultBalance - totalLoansGiven + totalDiwaliSavings;
     
     setDashboardData({
         totalCashOnHand,

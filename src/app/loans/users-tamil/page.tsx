@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Search, FilePenLine } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -123,6 +123,15 @@ export default function LoanUsersPage() {
                         </div>
                     )}
                 </CardContent>
+                <CardFooter className="p-2 border-t bg-muted/20">
+                    <div className="flex justify-end w-full">
+                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon">
+                                <FilePenLine className="h-5 w-5" />
+                            </Button>
+                        </Link>
+                    </div>
+                </CardFooter>
               </Card>
             ))
           )}

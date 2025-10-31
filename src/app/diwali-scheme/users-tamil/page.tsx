@@ -9,7 +9,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Search, FilePenLine } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -115,6 +115,15 @@ export default function DiwaliSchemeUsersPage() {
                         <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{formatCurrency(user.totalSaved)}</span></div>
                     </div>
                  </CardContent>
+                 <CardFooter className="p-2 border-t bg-muted/20">
+                    <div className="flex justify-end w-full">
+                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon">
+                                <FilePenLine className="h-5 w-5" />
+                            </Button>
+                        </Link>
+                    </div>
+                </CardFooter>
               </Card>
             ))
           )}

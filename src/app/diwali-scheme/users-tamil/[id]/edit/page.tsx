@@ -64,7 +64,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
       });
       return;
     }
-    
+
     if (!fullName) {
       toast({
         variant: "destructive",
@@ -73,7 +73,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
       });
       return;
     }
-    
+
     try {
       await updateDoc(userDocRef, {
         name: fullName,
@@ -89,11 +89,11 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
 
       router.push("/diwali-scheme/users-tamil");
     } catch (error) {
-      console.error("Error updating user: ", error);
+      console.error("Error updating user:", error);
       toast({
         variant: "destructive",
         title: "பிழை",
-        description: "பயனரைப் புதுப்பிப்பதில் பிழை ஏற்பட்டது.",
+        description: "புதுப்பிப்பில் ஒரு பிழை ஏற்பட்டது.",
       });
     }
   };

@@ -13,6 +13,7 @@
  * - /users/{userId}/loans/{loanId}/transactions/{transactionId}: Stores transaction data related to a loan, accessible only to the user and admins.
  * - /users/{userId}/loans/{loanId}/repayments/{repaymentId}: Stores repayment data related to a loan, accessible only to the user and admins.
  * - /roles_admin/{userId}: Presence grants admin privileges to the user.
+ * - /diwali-users/{diwaliUserId}: Stores data for the Diwali savings scheme, accessible to any authenticated user.
  *
  * Key Security Decisions:
  * - Users can only access their own profile data.
@@ -148,6 +149,15 @@ service cloud.firestore {
       allow delete: if isOwner(userId) || isAdmin();
     }
 
+    /**
+     * @description Rules for the /diwali-users/{diwaliUserId} collection.
+     * Allows any authenticated user to read and write.
+     * @path /diwali-users/{diwaliUserId}
+     */
+    match /diwali-users/{diwaliUserId} {
+      allow read, write: if isSignedIn();
+    }
+
       /**
      * @description Rules for the /roles_admin/{userId} collection. Only admins can create admin roles.  Other users cannot read.
      * @path /roles_admin/{userId}
@@ -161,3 +171,4 @@ service cloud.firestore {
     }
   }
 }
+    

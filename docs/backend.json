@@ -65,6 +65,58 @@
         "faceImageURL"
       ]
     },
+    "DiwaliUser": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DiwaliUser",
+      "type": "object",
+      "description": "Represents a user participating in the Diwali savings scheme.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Diwali scheme user."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the user."
+        },
+        "contribution": {
+          "type": "number",
+          "description": "The contribution amount per frequency period."
+        },
+        "frequency": {
+          "type": "string",
+          "enum": ["weekly", "monthly"],
+          "description": "The contribution frequency."
+        },
+        "totalSaved": {
+          "type": "number",
+          "description": "The total amount saved by the user."
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL of the user's avatar image."
+        },
+        "joinDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The date the user joined the scheme."
+        },
+        "estimatedBonus": {
+          "type": "number",
+          "description": "The estimated bonus the user will receive."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "contribution",
+        "frequency",
+        "totalSaved",
+        "avatarUrl",
+        "joinDate",
+        "estimatedBonus"
+      ]
+    },
     "Loan": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Loan",
@@ -307,8 +359,25 @@
             }
           ]
         }
+      },
+      {
+        "path": "/diwali-users/{diwaliUserId}",
+        "definition": {
+          "entityName": "DiwaliUser",
+          "schema": {
+            "$ref": "#/backend/entities/DiwaliUser"
+          },
+          "description": "Stores Diwali scheme user information. The `diwaliUserId` is the document ID.",
+          "params": [
+            {
+              "name": "diwaliUserId",
+              "description": "The unique ID of the Diwali scheme user."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. Authorization independence is achieved through denormalization of authorization data. Data segregation ensures that collections have homogeneous security postures, and access modeling provides a consistent approach to authorization. The structure includes paths for users, vaults, loans, transactions, and repayments, ensuring comprehensive coverage of the LendEase application's data requirements. \n\nVaults are stored in a top-level collection. Each vault document contains financial summary data. Users are stored in a top-level collection, with user documents containing personal information. Loans are stored as subcollections of users (`/users/{userId}/loans/{loanId}`), enabling path-based ownership. Transactions and Repayments are stored as subcollections of Loans (`/users/{userId}/loans/{loanId}/transactions/{transactionId}` and `/users/{userId}/loans/{loanId}/repayments/{repaymentId}`), thus maintaining clear ownership and enabling efficient querying. This structure facilitates secure `list` operations because security rules can be applied at the collection level based on the user ID. The admin role is managed via the `/roles_admin/{userId}` document, allowing for role-based access control without relying on custom claims."
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. Authorization independence is achieved through denormalization of authorization data. Data segregation ensures that collections have homogeneous security postures, and access modeling provides a consistent approach to authorization. The structure includes paths for users, vaults, loans, transactions, and repayments, ensuring comprehensive coverage of the LendEase application's data requirements. \n\nVaults are stored in a top-level collection. Each vault document contains financial summary data. Users are stored in a top-level collection, with user documents containing personal information. Loans are stored as subcollections of users (`/users/{userId}/loans/{loanId}`), enabling path-based ownership. Transactions and Repayments are stored as subcollections of Loans (`/users/{userId}/loans/{loanId}/transactions/{transactionId}` and `/users/{userId}/loans/{loanId}/repayments/{repaymentId}`), thus maintaining clear ownership and enabling efficient querying. This structure facilitates secure `list` operations because security rules can be applied at the collection level based on the user ID. The admin role is managed via the `/roles_admin/{userId}` document, allowing for role-based access control without relying on custom claims. The `diwali-users` collection is a top-level collection for managing participants in the Diwali savings scheme."
   }
 }
+    

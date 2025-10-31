@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { ShieldCheck, Loader2 } from "lucide-react";
@@ -10,14 +10,17 @@ export default function LoginPage() {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const signInAttempted = useRef(false);
 
   useEffect(() => {
-    // Initiate anonymous sign-in when the component mounts
-    if (!user && !isUserLoading) {
-        initiateAnonymousSignIn(auth);
+    // If we're done loading and there's no user, and we haven't tried to sign in yet
+    if (!isUserLoading && !user && auth && !signInAttempted.current) {
+      // Mark that we are attempting to sign in
+      signInAttempted.current = true;
+      initiateAnonymousSignIn(auth);
     }
 
-    // When user object is available, redirect to dashboard
+    // When user object becomes available, redirect to dashboard
     if (user) {
       router.push("/dashboard-tamil");
     }

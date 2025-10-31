@@ -24,6 +24,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+type DiwaliUser = {
+    id: string;
+    name: string;
+    avatarUrl: string;
+    contribution: number;
+    frequency: 'weekly' | 'monthly';
+    totalSaved: number;
+    transactions?: { id: string; date: string; description: string; amount: number }[];
+};
 
 
 export default function DiwaliSchemeUsersPage() {
@@ -31,13 +56,14 @@ export default function DiwaliSchemeUsersPage() {
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
+  const [selectedUser, setSelectedUser] = useState<DiwaliUser | null>(null);
 
   const diwaliUsersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return collection(firestore, 'diwali-users');
   }, [firestore, user]);
   
-  const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading, error } = useCollection(diwaliUsersQuery);
+  const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading, error } = useCollection<DiwaliUser>(diwaliUsersQuery);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -74,6 +100,10 @@ export default function DiwaliSchemeUsersPage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleCardClick = (user: DiwaliUser) => {
+    setSelectedUser(user);
   };
   
   const isLoading = isDiwaliUsersLoading;
@@ -133,7 +163,7 @@ export default function DiwaliSchemeUsersPage() {
             </div>
           ) : (
             diwaliSchemeUsers && diwaliSchemeUsers.map((user) => (
-              <Card key={user.id} className="flex flex-col text-center">
+              <Card key={user.id} className="flex flex-col text-center cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleCardClick(user)}>
                  <CardContent className="flex-1 p-6 space-y-4">
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
                         <AvatarImage src={user.avatarUrl} alt={user.name}/>
@@ -149,11 +179,11 @@ export default function DiwaliSchemeUsersPage() {
                     <div className="flex justify-end w-full">
                          <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
                                     <MoreHorizontal className="h-5 w-5" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
+                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
@@ -181,6 +211,51 @@ export default function DiwaliSchemeUsersPage() {
           )}
         </div>
       </div>
+      
+      {selectedUser && (
+        <Dialog open={!!selectedUser} onOpenChange={(isOpen) => !isOpen && setSelectedUser(null)}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>{selectedUser.name} - பரிவர்த்தனை வரலாறு</DialogTitle>
+                    <DialogDescription>
+                        {selectedUser.name} க்கான அனைத்து பரிவர்த்தனைகளின் பட்டியல்.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="max-h-96 overflow-y-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>தேதி</TableHead>
+                                <TableHead>விளக்கம்</TableHead>
+                                <TableHead className="text-right">தொகை</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {selectedUser.transactions && selectedUser.transactions.length > 0 ? (
+                                selectedUser.transactions.map((tx) => (
+                                    <TableRow key={tx.id}>
+                                        <TableCell>{tx.date}</TableCell>
+                                        <TableCell>{tx.description}</TableCell>
+                                        <TableCell className="text-right font-medium text-green-600">
+                                            + {formatCurrency(tx.amount)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24">
+                                        பரிவர்த்தனைகள் எதுவும் இல்லை.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </DialogContent>
+        </Dialog>
+      )}
+
     </TamilAppLayout>
   );
 }
+ 

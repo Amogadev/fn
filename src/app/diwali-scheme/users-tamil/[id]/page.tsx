@@ -6,17 +6,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useDoc, useFirestore, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { ArrowLeft, Gift } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
-    const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
-    const user = diwaliUsers.find(u => u.id === params.id);
+    const firestore = useFirestore();
+    const userDocRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, 'diwali-users', params.id);
+    }, [firestore, params.id]);
 
+    const { data: user, isLoading } = useDoc(userDocRef);
+
+    if (isLoading) {
+        return <TamilAppLayout><div>Loading...</div></TamilAppLayout>;
+    }
+    
     if (!user) {
-        // You can render a "not found" state or redirect
         return notFound();
     }
 

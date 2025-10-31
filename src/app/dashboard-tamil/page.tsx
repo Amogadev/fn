@@ -34,6 +34,8 @@ import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 const ActionCard = ({
   title,
@@ -78,14 +80,21 @@ const navItems = [
 
 export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
 
   useEffect(() => {
     setIsDarkMode(theme === 'dark');
   }, [theme]);
   
   const [loanUsers] = useLocalStorage<any[]>("loan-users", []);
-  const [diwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+  const firestore = useFirestore();
+
+  const diwaliUsersQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'diwali-users');
+  }, [firestore]);
+
+  const { data: diwaliUsers } = useCollection(diwaliUsersQuery);
   
   const [dashboardData, setDashboardData] = useState({
       totalCashOnHand: 0,
@@ -108,10 +117,10 @@ export default function DashboardTamilPage() {
 
     const initialVaultBalance = 100000;
     const loanUsersCount = loanUsers.length;
-    const diwaliUsersCount = diwaliUsers.length;
+    const diwaliUsersCount = diwaliUsers?.length || 0;
   
     const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
-    const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
+    const totalDiwaliSavings = diwaliUsers?.reduce((acc, user) => acc + (user.totalSaved || 0), 0) || 0;
     const totalCashOnHand = initialVaultBalance - totalLoansGiven + totalDiwaliSavings;
     
     setDashboardData({
@@ -127,7 +136,6 @@ export default function DashboardTamilPage() {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    setIsDarkMode(newTheme === 'dark');
   }
 
   const formatCurrency = (amount: number) => {

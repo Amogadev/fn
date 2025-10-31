@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'வைப்புத்தொகை 360',
@@ -24,7 +25,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+          <FirebaseClientProvider>
+            {children}
+          </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>
       </body>

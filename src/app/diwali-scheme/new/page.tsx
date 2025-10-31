@@ -25,15 +25,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 import { CameraCapture } from "@/components/CameraCapture";
 import { cn } from "@/lib/utils";
+import { useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 export default function NewDiwaliSchemePage() {
   const { toast } = useToast();
   const router = useRouter();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [diwaliUsers, setDiwaliUsers] = useLocalStorage<any[]>("diwali-users", []);
+  const firestore = useFirestore();
   
   const [fullName, setFullName] = useState("");
   const [aadhaar, setAadhaar] = useState("");
@@ -85,7 +87,6 @@ export default function NewDiwaliSchemePage() {
     }
     
     const userToCreate = {
-        id: `ds_user_${Date.now()}`,
         name: fullName,
         contribution: 0,
         frequency: '',
@@ -105,7 +106,7 @@ export default function NewDiwaliSchemePage() {
   };
 
   const handleFinalSubmit = () => {
-    if (!newUser || !contribution || !frequency) {
+    if (!firestore || !newUser || !contribution || !frequency) {
          toast({
             variant: "destructive",
             title: "தகவல் இல்லை",
@@ -130,7 +131,9 @@ export default function NewDiwaliSchemePage() {
         }]
     };
 
-    setDiwaliUsers([...diwaliUsers, finalUserData]);
+    const diwaliUsersCollection = collection(firestore, 'diwali-users');
+    addDocumentNonBlocking(diwaliUsersCollection, finalUserData);
+
     toast({
         title: "பயனர் சேர்க்கப்பட்டார்!",
         description: `${fullName} தீபாவளி சிட் திட்டத்தில் சேர்க்கப்பட்டார்.`,

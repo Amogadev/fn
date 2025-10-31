@@ -25,13 +25,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, doc } from "firebase/firestore";
+import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 
 export default function DiwaliSchemeUsersPage() {
   const { toast } = useToast();
   const [currentDate, setCurrentDate] = useState('');
-  const [diwaliSchemeUsers, setDiwaliSchemeUsers] = useLocalStorage<any[]>("diwali-users", []);
+  const firestore = useFirestore();
+
+  const diwaliUsersQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'diwali-users');
+  }, [firestore]);
+  
+  const { data: diwaliSchemeUsers, isLoading } = useCollection(diwaliUsersQuery);
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -40,7 +50,9 @@ export default function DiwaliSchemeUsersPage() {
   }, []);
   
   const handleDeleteUser = (userId: string) => {
-    setDiwaliSchemeUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+    if (!firestore) return;
+    const userDocRef = doc(firestore, 'diwali-users', userId);
+    deleteDocumentNonBlocking(userDocRef);
     toast({
         title: "பயனர் நீக்கப்பட்டார்",
         description: "தேர்ந்தெடுக்கப்பட்ட பயனர் வெற்றிகரமாக நீக்கப்பட்டார்.",
@@ -100,16 +112,17 @@ export default function DiwaliSchemeUsersPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {!isClient ? (
+          {isLoading && (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
             </div>
-          ) : diwaliSchemeUsers.length === 0 ? (
+          )}
+          {!isLoading && diwaliSchemeUsers && diwaliSchemeUsers.length === 0 ? (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
             </div>
           ) : (
-            diwaliSchemeUsers.map((user) => (
+            diwaliSchemeUsers && diwaliSchemeUsers.map((user) => (
               <Card key={user.id} className="flex flex-col text-center">
                  <CardContent className="flex-1 p-6 space-y-4">
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">

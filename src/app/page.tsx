@@ -1,67 +1,27 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { ShieldCheck } from "lucide-react";
-import { useState } from "react";
-
-const loginSchema = z.object({
-  email: z.string().email({ message: "தவறான மின்னஞ்சல் முகவரி." }),
-  password: z
-    .string()
-    .min(1, { message: "கடவுச்சொல் தேவை." }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
+import { ShieldCheck, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "login@example.com",
-      password: "",
-    },
-  });
-
-  const onSubmit = (data: LoginFormValues) => {
-    if (data.email === "login@example.com" && data.password === "12345") {
-      toast({
-        title: "வெற்றிகரமாக உள்நுழைந்துள்ளீர்கள்",
-        description: "உங்கள் டாஷ்போர்டுக்கு திருப்பி விடப்படுகிறீர்கள்...",
-      });
-      router.push("/dashboard-tamil");
-    } else {
-      toast({
-        title: "தவறான நற்சான்றிதழ்கள்",
-        description: "உங்கள் மின்னஞ்சல் மற்றும் கடவுச்சொல்லை சரிபார்க்கவும்.",
-        variant: "destructive",
-      });
+  useEffect(() => {
+    // Initiate anonymous sign-in when the component mounts
+    if (!user && !isUserLoading) {
+        initiateAnonymousSignIn(auth);
     }
-  };
+
+    // When user object is available, redirect to dashboard
+    if (user) {
+      router.push("/dashboard-tamil");
+    }
+  }, [user, isUserLoading, auth, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -74,63 +34,12 @@ export default function LoginPage() {
                 </CardTitle>
             </div>
           <CardDescription>
-            நிர்வாகி உள்நுழைவு
+            பாதுகாப்பான நிதி மேலாண்மை
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>மின்னஞ்சல்</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="login@example.com"
-                        type="email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>கடவுச்சொல்</FormLabel>
-                    <FormControl>
-                        <div className="relative">
-                            <Input placeholder="கடவுச்சொல்" type={showPassword ? "text" : "password"} {...field} />
-                             <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                        </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white"
-                disabled={form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting ? "உள்நுழைகிறது..." : "உள்நுழைக"}
-              </Button>
-            </form>
-          </Form>
+        <CardContent className="flex flex-col items-center justify-center space-y-4 p-12">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <p className="text-muted-foreground">உள்நுழைகிறது...</p>
         </CardContent>
       </Card>
     </div>

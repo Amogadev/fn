@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye } from "lucide-react";
+import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
@@ -18,6 +18,14 @@ import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebas
 import { collection, deleteDoc, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 
 export default function LoanUsersPage() {
@@ -155,21 +163,36 @@ export default function LoanUsersPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Link href={`/loans/users-tamil/${user.id}`}>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
                                                     <Button variant="ghost" size="icon">
-                                                        <Eye className="h-4 w-4" />
+                                                        <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
-                                                </Link>
-                                                <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                                                    <Button variant="ghost" size="icon">
-                                                        <FilePenLine className="h-4 w-4" />
-                                                    </Button>
-                                                </Link>
-                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
-                                                    <Trash2 className="h-4 w-4 text-destructive" />
-                                                </Button>
-                                            </div>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
+                                                    <Link href={`/loans/users-tamil/${user.id}`}>
+                                                        <DropdownMenuItem>
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            பார்வை
+                                                        </DropdownMenuItem>
+                                                    </Link>
+                                                    <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                                                        <DropdownMenuItem>
+                                                            <FilePenLine className="mr-2 h-4 w-4" />
+                                                            திருத்து
+                                                        </DropdownMenuItem>
+                                                    </Link>
+                                                    <DropdownMenuItem
+                                                        onClick={() => handleDelete(user.id, user.name)}
+                                                        className="text-destructive"
+                                                    >
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        நீக்கு
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -213,20 +236,34 @@ export default function LoanUsersPage() {
                     </div>
                  </CardContent>
                  <CardFooter className="p-2 border-t bg-muted/20">
-                    <div className="flex justify-around w-full">
-                        <Link href={`/loans/users-tamil/${user.id}`}>
-                            <Button variant="ghost" size="icon">
-                                <Eye className="h-5 w-5" />
-                            </Button>
-                        </Link>
-                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                            <Button variant="ghost" size="icon">
-                                <FilePenLine className="h-5 w-5" />
-                            </Button>
-                        </Link>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
-                            <Trash2 className="h-5 w-5 text-destructive" />
-                        </Button>
+                    <div className="flex justify-end w-full">
+                       <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-5 w-5" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <Link href={`/loans/users-tamil/${user.id}`}>
+                                    <DropdownMenuItem>
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        <span>பார்வை</span>
+                                    </DropdownMenuItem>
+                                </Link>
+                                <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                                     <DropdownMenuItem>
+                                        <FilePenLine className="mr-2 h-4 w-4" />
+                                        <span>திருத்து</span>
+                                    </DropdownMenuItem>
+                                </Link>
+                                <DropdownMenuItem onClick={() => handleDelete(user.id, user.name)} className="text-destructive">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    <span>நீக்கு</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </CardFooter>
               </Card>

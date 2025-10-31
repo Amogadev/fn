@@ -44,8 +44,6 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
   const [fullName, setFullName] = useState("");
-  const [contact, setContact] = useState("4545454545"); // Placeholder
-  const [idProof, setIdProof] = useState("90909090"); // Placeholder
   const [loanAmount, setLoanAmount] = useState<number | string>("");
   const [paidAmount, setPaidAmount] = useState<number | string>("");
 
@@ -55,7 +53,6 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
       setFullName(user.name);
       setLoanAmount(user.loanAmount);
       setPaidAmount(user.paidAmount);
-      // Contact and ID proof are placeholders as they are not in the current data model
     }
   }, [user]);
 

@@ -26,6 +26,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+type LoanUser = {
+    id: string;
+    name: string;
+    avatarUrl: string;
+    loanAmount: number;
+    paidAmount: number;
+    status: string;
+    transactions?: { id: string; date: string; description: string; type: 'credit' | 'debit'; amount: number }[];
+};
 
 
 export default function LoanUsersPage() {
@@ -34,6 +51,7 @@ export default function LoanUsersPage() {
     const { user } = useUser();
     const [isClient, setIsClient] = useState(false);
     const { toast } = useToast();
+    const [transactionsUser, setTransactionsUser] = useState<LoanUser | null>(null);
 
     useEffect(() => {
         setIsClient(true);
@@ -44,7 +62,7 @@ export default function LoanUsersPage() {
         if (!firestore || !user) return null;
         return collection(firestore, 'loan-users');
     }, [firestore, user]);
-    const { data: loanUsers, isLoading: isLoanUsersLoading } = useCollection(loanUsersQuery);
+    const { data: loanUsers, isLoading: isLoanUsersLoading } = useCollection<LoanUser>(loanUsersQuery);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('ta-IN', {
@@ -73,6 +91,11 @@ export default function LoanUsersPage() {
           });
         }
       }
+    };
+
+    const handleViewClick = (e: React.MouseEvent, user: LoanUser) => {
+        e.stopPropagation();
+        setTransactionsUser(user);
     };
 
     const isLoading = isLoanUsersLoading;
@@ -172,12 +195,10 @@ export default function LoanUsersPage() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
-                                                    <Link href={`/loans/users-tamil/${user.id}`}>
-                                                        <DropdownMenuItem>
-                                                            <Eye className="mr-2 h-4 w-4" />
-                                                            பார்வை
-                                                        </DropdownMenuItem>
-                                                    </Link>
+                                                     <DropdownMenuItem onClick={(e) => handleViewClick(e, user)}>
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        பரிவர்த்தனைகளைப் பார்க்க
+                                                    </DropdownMenuItem>
                                                     <Link href={`/loans/users-tamil/${user.id}/edit`}>
                                                         <DropdownMenuItem>
                                                             <FilePenLine className="mr-2 h-4 w-4" />
@@ -246,12 +267,10 @@ export default function LoanUsersPage() {
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <Link href={`/loans/users-tamil/${user.id}`}>
-                                    <DropdownMenuItem>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        <span>பார்வை</span>
-                                    </DropdownMenuItem>
-                                </Link>
+                                <DropdownMenuItem onClick={(e) => handleViewClick(e, user)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    <span>பார்வை</span>
+                                </DropdownMenuItem>
                                 <Link href={`/loans/users-tamil/${user.id}/edit`}>
                                      <DropdownMenuItem>
                                         <FilePenLine className="mr-2 h-4 w-4" />
@@ -271,6 +290,51 @@ export default function LoanUsersPage() {
           )}
         </div>
       </div>
+
+       {/* Transactions Modal */}
+      {transactionsUser && (
+        <Dialog open={!!transactionsUser} onOpenChange={(isOpen) => !isOpen && setTransactionsUser(null)}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{transactionsUser.name} - பரிவர்த்தனை வரலாறு</DialogTitle>
+                    <DialogDescription>
+                        {transactionsUser.name} க்கான அனைத்து பரிவர்த்தனைகளின் பட்டியல்.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="max-h-96 overflow-y-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>தேதி</TableHead>
+                                <TableHead>விளக்கம்</TableHead>
+                                <TableHead className="text-right">தொகை</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {transactionsUser.transactions && transactionsUser.transactions.length > 0 ? (
+                                transactionsUser.transactions.map((tx) => (
+                                    <TableRow key={tx.id}>
+                                        <TableCell>{tx.date}</TableCell>
+                                        <TableCell>{tx.description}</TableCell>
+                                        <TableCell className={`text-right font-medium ${tx.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                                            {tx.type === 'credit' ? '+' : ''} {formatCurrency(tx.amount)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24">
+                                        பரிவர்த்தனைகள் எதுவும் இல்லை.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </DialogContent>
+        </Dialog>
+      )}
     </TamilAppLayout>
   );
 }
+

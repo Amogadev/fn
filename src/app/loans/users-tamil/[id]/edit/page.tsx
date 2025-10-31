@@ -21,7 +21,7 @@ import { useDoc, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
-export default function EditLoanUserPage({ params: { id } }: { params: { id: string } }) {
+export default function EditLoanUserPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
@@ -37,9 +37,9 @@ export default function EditLoanUserPage({ params: { id } }: { params: { id: str
   }, []);
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !id || !authUser) return null;
-    return doc(firestore, 'loan-users', id);
-  }, [firestore, id, authUser]);
+    if (!firestore || !params.id || !authUser) return null;
+    return doc(firestore, 'loan-users', params.id);
+  }, [firestore, params.id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

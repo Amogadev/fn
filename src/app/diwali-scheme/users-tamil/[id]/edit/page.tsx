@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -56,7 +55,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
     }
   }, [user]);
 
-  const handleUpdateUser = async () => {
+  const handleSave = async () => {
     if (!firestore || !userDocRef) {
       toast({
         variant: "destructive",
@@ -130,6 +129,7 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
               தேவைக்கேற்ப பயனரின் விவரங்களைப் புதுப்பிக்கவும்.
             </CardDescription>
           </CardHeader>
+
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="full-name">முழு பெயர்</Label>
@@ -139,48 +139,49 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>பங்களிப்புத் தொகை</Label>
                 <Select value={contribution} onValueChange={setContribution}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="100">₹100</SelectItem>
-                        <SelectItem value="1000">₹1,000</SelectItem>
-                        <SelectItem value="5000">₹5,000</SelectItem>
-                    </SelectContent>
+                  <SelectTrigger>
+                    <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="100">100</SelectItem>
+                    <SelectItem value="1000">1,000</SelectItem>
+                    <SelectItem value="5000">5,000</SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2">
-                  <Label>கால இடைவெளி</Label>
-                  <Select value={frequency} onValueChange={setFrequency}>
-                      <SelectTrigger>
-                          <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
-                      </Trigger>
-                      <SelectContent>
-                          <SelectItem value="weekly">வாராந்திர</SelectItem>
-                          <SelectItem value="monthly">மாதாந்திர</SelectItem>
-                      </SelectContent>
-                  </Select>
+                <Label>கால இடைவெளி</Label>
+                <Select value={frequency} onValueChange={setFrequency}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+
             <div className="space-y-2">
-                <Label htmlFor="total-saved">மொத்த சேமிப்பு</Label>
-                <Input
-                    id="total-saved"
-                    type="number"
-                    value={totalSaved}
-                    onChange={(e) => setTotalSaved(e.target.value)}
-                />
+              <Label htmlFor="total-saved">மொத்தம் சேமிப்பு</Label>
+              <Input
+                id="total-saved"
+                type="number"
+                value={totalSaved}
+                onChange={(e) => setTotalSaved(e.target.value)}
+              />
             </div>
+
+            <Button onClick={handleSave}>மாற்றங்களைச் சேமி</Button>
           </CardContent>
         </Card>
-
-        <Button className="w-full" onClick={handleUpdateUser}>
-          மாற்றங்களைச் சேமி
-        </Button>
       </div>
     </TamilAppLayout>
   );

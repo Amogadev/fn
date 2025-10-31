@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
@@ -116,7 +117,9 @@ export default function DiwaliSchemeUsersPage() {
                         <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
                             <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
                         </Link>
-                        <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Link href="/diwali-scheme/new">
+                          <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        </Link>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>

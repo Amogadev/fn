@@ -26,6 +26,15 @@ export default function EditLoanUserPage({ params: { id } }: { params: { id: str
   const router = useRouter();
   const firestore = useFirestore();
   const { user: authUser, isUserLoading } = useUser();
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString('ta-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }));
+  }, []);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !id || !authUser) return null;
@@ -35,47 +44,30 @@ export default function EditLoanUserPage({ params: { id } }: { params: { id: str
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
   const [fullName, setFullName] = useState("");
-  const [paidAmount, setPaidAmount] = useState<number | string>("");
+  const [contact, setContact] = useState("4545454545"); // Placeholder
+  const [idProof, setIdProof] = useState("90909090"); // Placeholder
 
   useEffect(() => {
     if (user) {
       setFullName(user.name);
-      setPaidAmount(user.paidAmount);
+      // Contact and ID proof are placeholders as they are not in the current data model
     }
   }, [user]);
 
   const handleUpdateUser = async () => {
-    if (!firestore || !userDocRef) {
+    if (!firestore || !userDocRef || !user) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Firestore not available.",
+        description: "Firestore not available or user not found.",
       });
       return;
     }
     
-    if (!fullName) {
-      toast({
-        variant: "destructive",
-        title: "தகவல் இல்லை",
-        description: "தயவுசெய்து முழுப் பெயரை நிரப்பவும்.",
-      });
-      return;
-    }
-
-    const newPaidAmount = Number(paidAmount);
-    let newStatus = user?.status;
-    if (newPaidAmount >= (user?.loanAmount || 0)) {
-        newStatus = 'முடிந்தது';
-    } else {
-        newStatus = 'செயலில்';
-    }
-
     try {
       await updateDoc(userDocRef, {
         name: fullName,
-        paidAmount: newPaidAmount,
-        status: newStatus,
+        // contact and idProof are not in the model, so we don't update them
       });
 
       toast({
@@ -105,24 +97,43 @@ export default function EditLoanUserPage({ params: { id } }: { params: { id: str
   }
 
   return (
-    <TamilAppLayout>
-      <div className="space-y-8">
-        <header className="flex items-center gap-4">
-          <Link href="/loans/users-tamil">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="w-6 h-6" />
-            </Button>
-          </Link>
-          <h1 className="text-2xl font-bold tracking-tight font-headline">
-            கடன் பயனர் விவரங்களைத் திருத்து
-          </h1>
+    <TamilAppLayout showFloatingNav>
+      <div className="space-y-6">
+        <header className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                 <Link href="/dashboard-tamil">
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <h1 className="text-2xl font-bold tracking-tight font-headline">
+                    வணக்கம்.
+                </h1>
+            </div>
+            <div className="text-right">
+                <p className="text-sm text-muted-foreground">{currentDate}</p>
+            </div>
         </header>
+
+        <div className="flex justify-between items-center">
+            <div>
+                <h2 className="text-3xl font-bold font-headline">பயனரைத் திருத்து</h2>
+                <p className="text-muted-foreground">பயனரின் தனிப்பட்ட தகவலைப் புதுப்பிக்கவும்.</p>
+            </div>
+            <Link href="/loans/users-tamil">
+                <Button variant="outline">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    பயனர்கள் பக்கத்திற்குத் திரும்பு
+                </Button>
+            </Link>
+        </div>
+
 
         <Card>
           <CardHeader>
-            <CardTitle>பயனர் தகவல்</CardTitle>
+            <CardTitle>தனிப்பட்ட தகவல்</CardTitle>
             <CardDescription>
-              தேவைக்கேற்ப பயனரின் விவரங்களைப் புதுப்பிக்கவும்.
+              {user.name} க்கான விவரங்களை மாற்றியமைக்கவும்.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -134,20 +145,21 @@ export default function EditLoanUserPage({ params: { id } }: { params: { id: str
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
-             <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                    <Label htmlFor="loan-amount">மொத்த கடன்</Label>
-                    <Input id="loan-amount" value={user?.loanAmount || ''} disabled />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="paid-amount">செலுத்திய தொகை</Label>
-                    <Input
-                        id="paid-amount"
-                        type="number"
-                        value={paidAmount}
-                        onChange={(e) => setPaidAmount(e.target.value)}
-                    />
-                </div>
+             <div className="space-y-2">
+                <Label htmlFor="contact-number">தொடர்பு எண்</Label>
+                <Input
+                    id="contact-number"
+                    value={contact}
+                    onChange={(e) => setContact(e.target.value)}
+                />
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="id-proof">அடையாளச் சான்று (ஆதார்)</Label>
+                <Input
+                    id="id-proof"
+                    value={idProof}
+                    onChange={(e) => setIdProof(e.target.value)}
+                />
             </div>
           </CardContent>
         </Card>

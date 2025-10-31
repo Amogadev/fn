@@ -143,7 +143,7 @@ export default function NewDiwaliSchemePage() {
             <p className="text-muted-foreground">சரிபார்ப்புக்காக உங்கள் தகவலை வழங்கவும்.</p>
 
              <div className="grid gap-8 lg:grid-cols-2">
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-4">
                     <Card>
                         <CardHeader>
                             <CardTitle>உங்கள் விவரங்கள்</CardTitle>
@@ -253,5 +253,3 @@ export default function NewDiwaliSchemePage() {
     </TamilAppLayout>
   );
 }
-
-    

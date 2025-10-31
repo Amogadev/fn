@@ -46,10 +46,15 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState("4545454545"); // Placeholder
   const [idProof, setIdProof] = useState("90909090"); // Placeholder
+  const [loanAmount, setLoanAmount] = useState<number | string>("");
+  const [paidAmount, setPaidAmount] = useState<number | string>("");
+
 
   useEffect(() => {
     if (user) {
       setFullName(user.name);
+      setLoanAmount(user.loanAmount);
+      setPaidAmount(user.paidAmount);
       // Contact and ID proof are placeholders as they are not in the current data model
     }
   }, [user]);
@@ -67,7 +72,8 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
     try {
       await updateDoc(userDocRef, {
         name: fullName,
-        // contact and idProof are not in the model, so we don't update them
+        loanAmount: Number(loanAmount),
+        paidAmount: Number(paidAmount)
       });
 
       toast({
@@ -97,7 +103,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   }
 
   return (
-    <TamilAppLayout showFloatingNav>
+    <TamilAppLayout>
       <div className="space-y-6">
         <header className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -118,7 +124,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
         <div className="flex justify-between items-center">
             <div>
                 <h2 className="text-3xl font-bold font-headline">பயனரைத் திருத்து</h2>
-                <p className="text-muted-foreground">பயனரின் தனிப்பட்ட தகவலைப் புதுப்பிக்கவும்.</p>
+                <p className="text-muted-foreground">பயனரின் தகவலைப் புதுப்பிக்கவும்.</p>
             </div>
             <Link href="/loans/users-tamil">
                 <Button variant="outline">
@@ -131,7 +137,7 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
 
         <Card>
           <CardHeader>
-            <CardTitle>தனிப்பட்ட தகவல்</CardTitle>
+            <CardTitle>பயனர் தகவல்</CardTitle>
             <CardDescription>
               {user.name} க்கான விவரங்களை மாற்றியமைக்கவும்.
             </CardDescription>
@@ -145,21 +151,25 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
-             <div className="space-y-2">
-                <Label htmlFor="contact-number">தொடர்பு எண்</Label>
-                <Input
-                    id="contact-number"
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                />
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="id-proof">அடையாளச் சான்று (ஆதார்)</Label>
-                <Input
-                    id="id-proof"
-                    value={idProof}
-                    onChange={(e) => setIdProof(e.target.value)}
-                />
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="loan-amount">கடன் தொகை</Label>
+                    <Input
+                        id="loan-amount"
+                        type="number"
+                        value={loanAmount}
+                        onChange={(e) => setLoanAmount(e.target.value)}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="paid-amount">செலுத்திய தொகை</Label>
+                    <Input
+                        id="paid-amount"
+                        type="number"
+                        value={paidAmount}
+                        onChange={(e) => setPaidAmount(e.target.value)}
+                    />
+                </div>
             </div>
           </CardContent>
         </Card>

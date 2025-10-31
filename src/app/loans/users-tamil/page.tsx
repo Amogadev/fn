@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection, deleteDoc, doc } from "firebase/firestore";
+import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -32,7 +32,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 type LoanUser = {
     id: string;
@@ -52,6 +54,9 @@ export default function LoanUsersPage() {
     const [isClient, setIsClient] = useState(false);
     const { toast } = useToast();
     const [transactionsUser, setTransactionsUser] = useState<LoanUser | null>(null);
+    const [repaymentUser, setRepaymentUser] = useState<LoanUser | null>(null);
+    const [repaymentAmount, setRepaymentAmount] = useState('');
+
 
     useEffect(() => {
         setIsClient(true);
@@ -96,6 +101,62 @@ export default function LoanUsersPage() {
     const handleViewClick = (e: React.MouseEvent, user: LoanUser) => {
         e.stopPropagation();
         setTransactionsUser(user);
+    };
+
+    const handleAddRepaymentClick = (e: React.MouseEvent, user: LoanUser) => {
+        e.stopPropagation();
+        setRepaymentUser(user);
+    };
+
+    const handleSaveRepayment = async () => {
+        if (!repaymentUser || !firestore) return;
+
+        const amount = parseFloat(repaymentAmount);
+        if (isNaN(amount) || amount <= 0) {
+          toast({
+            variant: "destructive",
+            title: "தவறான தொகை",
+            description: "சரியான தொகையை உள்ளிடவும்.",
+          });
+          return;
+        }
+
+        const userDocRef = doc(firestore, "loan-users", repaymentUser.id);
+        
+        const newTransaction = {
+          id: `txn_${Date.now()}`,
+          date: new Date().toLocaleDateString('ta-IN'),
+          description: "EMI செலுத்தியது",
+          type: 'credit' as const,
+          amount: amount,
+        };
+        
+        const updatedPaidAmount = (repaymentUser.paidAmount || 0) + amount;
+        const updatedTransactions = [...(repaymentUser.transactions || []), newTransaction];
+        const newStatus = updatedPaidAmount >= repaymentUser.loanAmount ? "முடிந்தது" : "செயலில்";
+
+        try {
+          await updateDoc(userDocRef, {
+            paidAmount: updatedPaidAmount,
+            transactions: updatedTransactions,
+            status: newStatus
+          });
+
+          toast({
+            title: "பணம் சேமிக்கப்பட்டது",
+            description: `${repaymentUser.name} க்கான ${formatCurrency(amount)} வெற்றிகரமாக சேர்க்கப்பட்டது.`,
+          });
+
+          setRepaymentUser(null);
+          setRepaymentAmount('');
+        } catch (e) {
+          console.error("Error updating repayment: ", e);
+          toast({
+            variant: "destructive",
+            title: "பிழை",
+            description: "பணம் சேமிக்கும்போது ஒரு பிழை ஏற்பட்டது.",
+          });
+        }
     };
 
     const isLoading = isLoanUsersLoading;
@@ -186,34 +247,39 @@ export default function LoanUsersPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator />
-                                                     <DropdownMenuItem onClick={(e) => handleViewClick(e, user)}>
-                                                        <Eye className="mr-2 h-4 w-4" />
-                                                        பரிவர்த்தனைகளைப் பார்க்க
-                                                    </DropdownMenuItem>
-                                                    <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                                                        <DropdownMenuItem>
-                                                            <FilePenLine className="mr-2 h-4 w-4" />
-                                                            திருத்து
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button variant="outline" size="icon" onClick={(e) => handleAddRepaymentClick(e, user)}>
+                                                    <Plus className="h-4 w-4" />
+                                                </Button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                         <DropdownMenuItem onClick={(e) => handleViewClick(e, user)}>
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            பரிவர்த்தனைகளைப் பார்க்க
                                                         </DropdownMenuItem>
-                                                    </Link>
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDelete(user.id, user.name)}
-                                                        className="text-destructive"
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" />
-                                                        நீக்கு
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                                                            <DropdownMenuItem>
+                                                                <FilePenLine className="mr-2 h-4 w-4" />
+                                                                திருத்து
+                                                            </DropdownMenuItem>
+                                                        </Link>
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleDelete(user.id, user.name)}
+                                                            className="text-destructive"
+                                                        >
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            நீக்கு
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -257,7 +323,10 @@ export default function LoanUsersPage() {
                     </div>
                  </CardContent>
                  <CardFooter className="p-2 border-t bg-muted/20">
-                    <div className="flex justify-end w-full">
+                    <div className="flex justify-end w-full gap-2">
+                        <Button variant="ghost" size="icon" onClick={(e) => handleAddRepaymentClick(e, user)}>
+                            <Plus className="h-5 w-5"/>
+                        </Button>
                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -334,7 +403,39 @@ export default function LoanUsersPage() {
             </DialogContent>
         </Dialog>
       )}
+
+      {/* Add Repayment Modal */}
+      {repaymentUser && (
+        <Dialog open={!!repaymentUser} onOpenChange={(isOpen) => !isOpen && setRepaymentUser(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{repaymentUser.name} க்கான புதிய கட்டணம்</DialogTitle>
+              <DialogDescription>
+                புதிய திருப்பிச் செலுத்தும் தொகையை உள்ளிடவும்.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="repayment-amount">தொகை</Label>
+                <Input
+                  id="repayment-amount"
+                  type="number"
+                  value={repaymentAmount}
+                  onChange={(e) => setRepaymentAmount(e.target.value)}
+                  placeholder="₹1000"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRepaymentUser(null)}>
+                ரத்துசெய்
+              </Button>
+              <Button onClick={handleSaveRepayment}>பணத்தைச் சேமி</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </TamilAppLayout>
   );
 }
-

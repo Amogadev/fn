@@ -6,32 +6,17 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
-import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 
 export default function DiwaliSchemeUsersPage() {
-  const { toast } = useToast();
   const [currentDate, setCurrentDate] = useState('');
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
@@ -50,15 +35,6 @@ export default function DiwaliSchemeUsersPage() {
     setCurrentDate(new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' }));
   }, []);
   
-  const handleDeleteUser = (userId: string) => {
-    if (!firestore) return;
-    const userDocRef = doc(firestore, 'diwali-users', userId);
-    deleteDocumentNonBlocking(userDocRef);
-    toast({
-        title: "பயனர் நீக்கப்பட்டார்",
-        description: "தேர்ந்தெடுக்கப்பட்ட பயனர் வெற்றிகரமாக நீக்கப்பட்டார்.",
-    });
-  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ta-IN', {
@@ -138,33 +114,6 @@ export default function DiwaliSchemeUsersPage() {
                         <div className="flex justify-between font-bold"><span>மொத்த சேமிப்பு:</span> <span>{formatCurrency(user.totalSaved)}</span></div>
                     </div>
                  </CardContent>
-                <CardFooter className="p-4 border-t">
-                    <div className="flex justify-around w-full">
-                        <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
-                            <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
-                        </Link>
-                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
-                          <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
-                        </Link>
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete the user <span className="font-bold">{user.name}</span>.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>Delete</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
-                </CardFooter>
               </Card>
             ))
           )}

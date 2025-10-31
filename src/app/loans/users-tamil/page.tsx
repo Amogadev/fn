@@ -6,33 +6,18 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, Eye, FilePenLine, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
-import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 
 export default function LoanUsersPage() {
-    const { toast } = useToast();
     const [currentDate, setCurrentDate] = useState('');
     const firestore = useFirestore();
     const { user, isUserLoading } = useUser();
@@ -48,16 +33,6 @@ export default function LoanUsersPage() {
         return collection(firestore, 'loan-users');
     }, [firestore, user]);
     const { data: loanUsers, isLoading: isLoanUsersLoading } = useCollection(loanUsersQuery);
-
-    const handleDeleteUser = (userId: string) => {
-        if (!firestore) return;
-        const userDocRef = doc(firestore, 'loan-users', userId);
-        deleteDocumentNonBlocking(userDocRef);
-        toast({
-            title: "பயனர் நீக்கப்பட்டார்",
-            description: "தேர்ந்தெடுக்கப்பட்ட பயனர் வெற்றிகரமாக நீக்கப்பட்டார்.",
-        });
-    };
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('ta-IN', {
@@ -147,33 +122,6 @@ export default function LoanUsersPage() {
                         </div>
                     )}
                 </CardContent>
-                <CardFooter className="p-4 border-t">
-                    <div className="flex justify-around w-full">
-                        <Link href={`/loans/users-tamil/${user.id}`}>
-                            <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
-                        </Link>
-                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                            <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
-                        </Link>
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete the user <span className="font-bold">{user.name}</span>.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>Delete</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
-                </CardFooter>
               </Card>
             ))
           )}

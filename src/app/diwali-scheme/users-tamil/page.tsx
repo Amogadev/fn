@@ -9,25 +9,27 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, FilePenLine } from "lucide-react";
+import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, deleteDoc, doc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function DiwaliSchemeUsersPage() {
   const [currentDate, setCurrentDate] = useState('');
   const firestore = useFirestore();
-  const { user, isUserLoading } = useUser();
+  const { user } = useUser();
+  const { toast } = useToast();
 
   const diwaliUsersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return collection(firestore, 'diwali-users');
   }, [firestore, user]);
   
-  const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading } = useCollection(diwaliUsersQuery);
+  const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading, error } = useCollection(diwaliUsersQuery);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -35,6 +37,26 @@ export default function DiwaliSchemeUsersPage() {
     setIsClient(true);
     setCurrentDate(new Date().toLocaleDateString('ta-IN', { day: 'numeric', month: 'long', year: 'numeric' }));
   }, []);
+
+  const handleDelete = async (userId: string, userName: string) => {
+    if (!firestore) return;
+    if (confirm(`'${userName}' என்ற பயனரை நீக்க விரும்புகிறீர்களா?`)) {
+      try {
+        await deleteDoc(doc(firestore, "diwali-users", userId));
+        toast({
+          title: "பயனர் நீக்கப்பட்டார்",
+          description: `${userName} என்பவர் நீக்கப்பட்டுவிட்டார்.`,
+        });
+      } catch (e) {
+        console.error("Error deleting user: ", e);
+        toast({
+          variant: "destructive",
+          title: "பிழை",
+          description: "பயனரை நீக்கும்போது ஒரு பிழை ஏற்பட்டது.",
+        });
+      }
+    }
+  };
   
 
   const formatCurrency = (amount: number) => {
@@ -46,7 +68,7 @@ export default function DiwaliSchemeUsersPage() {
     }).format(amount);
   };
   
-  const isLoading = isUserLoading || isDiwaliUsersLoading;
+  const isLoading = isDiwaliUsersLoading;
 
   return (
     <TamilAppLayout>
@@ -116,12 +138,20 @@ export default function DiwaliSchemeUsersPage() {
                     </div>
                  </CardContent>
                  <CardFooter className="p-2 border-t bg-muted/20">
-                    <div className="flex justify-end w-full">
+                    <div className="flex justify-around w-full">
+                        <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon">
+                                <Eye className="h-5 w-5" />
+                            </Button>
+                        </Link>
                         <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
                             <Button variant="ghost" size="icon">
                                 <FilePenLine className="h-5 w-5" />
                             </Button>
                         </Link>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
+                            <Trash2 className="h-5 w-5 text-destructive" />
+                        </Button>
                     </div>
                 </CardFooter>
               </Card>

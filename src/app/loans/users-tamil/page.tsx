@@ -10,19 +10,21 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, FilePenLine } from "lucide-react";
+import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, deleteDoc, doc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function LoanUsersPage() {
     const [currentDate, setCurrentDate] = useState('');
     const firestore = useFirestore();
-    const { user, isUserLoading } = useUser();
+    const { user } = useUser();
     const [isClient, setIsClient] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         setIsClient(true);
@@ -44,7 +46,27 @@ export default function LoanUsersPage() {
         }).format(amount);
     };
 
-    const isLoading = isUserLoading || isLoanUsersLoading;
+    const handleDelete = async (userId: string, userName: string) => {
+      if (!firestore) return;
+      if (confirm(`'${userName}' என்ற பயனரை நீக்க விரும்புகிறீர்களா?`)) {
+        try {
+          await deleteDoc(doc(firestore, "loan-users", userId));
+          toast({
+            title: "பயனர் நீக்கப்பட்டார்",
+            description: `${userName} என்பவர் நீக்கப்பட்டுவிட்டார்.`,
+          });
+        } catch (e) {
+          console.error("Error deleting user: ", e);
+          toast({
+            variant: "destructive",
+            title: "பிழை",
+            description: "பயனரை நீக்கும்போது ஒரு பிழை ஏற்பட்டது.",
+          });
+        }
+      }
+    };
+
+    const isLoading = isLoanUsersLoading;
 
     return (
     <TamilAppLayout>
@@ -124,12 +146,20 @@ export default function LoanUsersPage() {
                     )}
                 </CardContent>
                 <CardFooter className="p-2 border-t bg-muted/20">
-                    <div className="flex justify-end w-full">
+                    <div className="flex justify-around w-full">
+                        <Link href={`/loans/users-tamil/${user.id}`}>
+                            <Button variant="ghost" size="icon">
+                                <Eye className="h-5 w-5" />
+                            </Button>
+                        </Link>
                         <Link href={`/loans/users-tamil/${user.id}/edit`}>
                             <Button variant="ghost" size="icon">
                                 <FilePenLine className="h-5 w-5" />
                             </Button>
                         </Link>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)}>
+                            <Trash2 className="h-5 w-5 text-destructive" />
+                        </Button>
                     </div>
                 </CardFooter>
               </Card>

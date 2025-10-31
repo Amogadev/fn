@@ -7,14 +7,16 @@ import {
   Card,
   CardContent,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection, deleteDoc, doc } from "firebase/firestore";
+import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -30,6 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Table,
@@ -39,6 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 type DiwaliUser = {
     id: string;
@@ -56,7 +60,10 @@ export default function DiwaliSchemeUsersPage() {
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
-  const [selectedUser, setSelectedUser] = useState<DiwaliUser | null>(null);
+  
+  const [transactionsUser, setTransactionsUser] = useState<DiwaliUser | null>(null);
+  const [paymentUser, setPaymentUser] = useState<DiwaliUser | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
 
   const diwaliUsersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -103,7 +110,60 @@ export default function DiwaliSchemeUsersPage() {
   };
 
   const handleCardClick = (user: DiwaliUser) => {
-    setSelectedUser(user);
+    setTransactionsUser(user);
+  };
+
+  const handleAddPaymentClick = (e: React.MouseEvent, user: DiwaliUser) => {
+      e.stopPropagation();
+      setPaymentUser(user);
+  }
+
+  const handleSavePayment = async () => {
+    if (!paymentUser || !firestore) return;
+
+    const amount = parseFloat(paymentAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast({
+        variant: "destructive",
+        title: "தவறான தொகை",
+        description: "சரியான தொகையை உள்ளிடவும்.",
+      });
+      return;
+    }
+
+    const userDocRef = doc(firestore, "diwali-users", paymentUser.id);
+    
+    const newTransaction = {
+      id: `txn_${Date.now()}`,
+      date: new Date().toLocaleDateString('ta-IN'),
+      description: "பங்களிப்பு செய்யப்பட்டது",
+      amount: amount,
+    };
+
+    const updatedTotalSaved = (paymentUser.totalSaved || 0) + amount;
+    const updatedTransactions = [...(paymentUser.transactions || []), newTransaction];
+
+    try {
+      await updateDoc(userDocRef, {
+        totalSaved: updatedTotalSaved,
+        transactions: updatedTransactions,
+      });
+
+      toast({
+        title: "பணம் சேமிக்கப்பட்டது",
+        description: `${paymentUser.name} க்கான ${formatCurrency(amount)} வெற்றிகரமாக சேர்க்கப்பட்டது.`,
+      });
+
+      setPaymentUser(null);
+      setPaymentAmount('');
+    } catch (e) {
+      console.error("Error updating payment: ", e);
+      toast({
+        variant: "destructive",
+        title: "பிழை",
+        description: "பணம் சேமிக்கும்போது ஒரு பிழை ஏற்பட்டது.",
+      });
+    }
   };
   
   const isLoading = isDiwaliUsersLoading;
@@ -176,7 +236,10 @@ export default function DiwaliSchemeUsersPage() {
                     </div>
                  </CardContent>
                  <CardFooter className="p-2 border-t bg-muted/20">
-                    <div className="flex justify-end w-full">
+                    <div className="flex justify-between w-full">
+                        <Button variant="ghost" size="icon" onClick={(e) => handleAddPaymentClick(e, user)}>
+                            <Plus className="h-5 w-5"/>
+                        </Button>
                          <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
@@ -212,13 +275,14 @@ export default function DiwaliSchemeUsersPage() {
         </div>
       </div>
       
-      {selectedUser && (
-        <Dialog open={!!selectedUser} onOpenChange={(isOpen) => !isOpen && setSelectedUser(null)}>
+      {/* Transactions Modal */}
+      {transactionsUser && (
+        <Dialog open={!!transactionsUser} onOpenChange={(isOpen) => !isOpen && setTransactionsUser(null)}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{selectedUser.name} - பரிவர்த்தனை வரலாறு</DialogTitle>
+                    <DialogTitle>{transactionsUser.name} - பரிவர்த்தனை வரலாறு</DialogTitle>
                     <DialogDescription>
-                        {selectedUser.name} க்கான அனைத்து பரிவர்த்தனைகளின் பட்டியல்.
+                        {transactionsUser.name} க்கான அனைத்து பரிவர்த்தனைகளின் பட்டியல்.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="max-h-96 overflow-y-auto">
@@ -231,8 +295,8 @@ export default function DiwaliSchemeUsersPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {selectedUser.transactions && selectedUser.transactions.length > 0 ? (
-                                selectedUser.transactions.map((tx) => (
+                            {transactionsUser.transactions && transactionsUser.transactions.length > 0 ? (
+                                transactionsUser.transactions.map((tx) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>
@@ -252,6 +316,38 @@ export default function DiwaliSchemeUsersPage() {
                     </Table>
                 </div>
             </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Add Payment Modal */}
+      {paymentUser && (
+        <Dialog open={!!paymentUser} onOpenChange={(isOpen) => !isOpen && setPaymentUser(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{paymentUser.name} க்கான புதிய கட்டணம்</DialogTitle>
+              <DialogDescription>
+                புதிய பங்களிப்பு தொகையை உள்ளிடவும்.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="payment-amount">தொகை</Label>
+                <Input
+                  id="payment-amount"
+                  type="number"
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(e.target.value)}
+                  placeholder="₹1000"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPaymentUser(null)}>
+                ரத்துசெய்
+              </Button>
+              <Button onClick={handleSavePayment}>பணத்தைச் சேமி</Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
       )}
 

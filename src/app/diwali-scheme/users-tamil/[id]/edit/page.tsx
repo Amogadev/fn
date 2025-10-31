@@ -83,20 +83,22 @@ export default function EditDiwaliUserPage({ params }: { params: { id: string } 
       });
 
       toast({
-        title: "பயனர் புதுப்பிக்கப்பட்டார்!",
-        description: `${fullName} விவரங்கள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன.`,
+        title: "புதுப்பிப்பு வெற்றி",
+        description: "பயனர் தகவல் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
       });
-
+      
       router.push("/diwali-scheme/users-tamil");
+
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
         variant: "destructive",
         title: "பிழை",
-        description: "புதுப்பிப்பில் ஒரு பிழை ஏற்பட்டது.",
+        description: "புதுப்பிப்பில் பிழை ஏற்பட்டது.",
       });
     }
   };
+
 
   const isLoading = isUserLoading || isDocLoading;
 

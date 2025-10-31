@@ -13,14 +13,14 @@ import { ArrowLeft, Gift } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default function DiwaliUserDetailPage({ params: { id } }: { params: { id: string } }) {
+export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
     
     const userDocRef = useMemoFirebase(() => {
-        if (!firestore || !authUser || !id) return null;
-        return doc(firestore, 'diwali-users', id);
-    }, [firestore, authUser, id]);
+        if (!firestore || !authUser || !params.id) return null;
+        return doc(firestore, 'diwali-users', params.id);
+    }, [firestore, authUser, params.id]);
 
     const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

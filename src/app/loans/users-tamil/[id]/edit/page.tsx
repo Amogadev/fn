@@ -22,7 +22,6 @@ import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
 export default function EditLoanUserPage({ params }: { params: { id: string } }) {
-  const { id } = params;
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
@@ -38,9 +37,9 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
   }, []);
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !id || !authUser) return null;
-    return doc(firestore, 'loan-users', id);
-  }, [firestore, id, authUser]);
+    if (!firestore || !params.id || !authUser) return null;
+    return doc(firestore, 'loan-users', params.id);
+  }, [firestore, params.id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 
@@ -56,7 +55,6 @@ export default function EditLoanUserPage({ params }: { params: { id: string } })
       setFullName(user.name);
       setLoanAmount(user.loanAmount);
       setPaidAmount(user.paidAmount);
-      // Assuming these fields might exist on the user object from creation step
       setContact(user.contact || "");
       setIdProof(user.idProof || "");
     }

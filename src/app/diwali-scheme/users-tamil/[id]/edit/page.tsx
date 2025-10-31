@@ -28,16 +28,16 @@ import { useDoc, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
-export default function EditDiwaliUserPage({ params: { id } }: { params: { id: string } }) {
+export default function EditDiwaliUserPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
   const { user: authUser, isUserLoading } = useUser();
 
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !id || !authUser) return null;
-    return doc(firestore, 'diwali-users', id);
-  }, [firestore, id, authUser]);
+    if (!firestore || !params.id || !authUser) return null;
+    return doc(firestore, 'diwali-users', params.id);
+  }, [firestore, params.id, authUser]);
 
   const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

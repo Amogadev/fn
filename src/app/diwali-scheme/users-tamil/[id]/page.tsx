@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TamilAppLayout } from "@/components/layout/TamilAppLayout";
@@ -6,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useDoc, useFirestore, useMemoFirebase } from "@/firebase";
+import { useDoc, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { ArrowLeft, Gift } from "lucide-react";
 import Link from "next/link";
@@ -14,15 +15,19 @@ import { notFound } from "next/navigation";
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
     const firestore = useFirestore();
+    const { user: authUser, isUserLoading: isAuthLoading } = useUser();
+    
     const userDocRef = useMemoFirebase(() => {
-        if (!firestore) return null;
+        if (!firestore || !authUser) return null;
         return doc(firestore, 'diwali-users', params.id);
-    }, [firestore, params.id]);
+    }, [firestore, authUser, params.id]);
 
-    const { data: user, isLoading } = useDoc(userDocRef);
+    const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
+
+    const isLoading = isAuthLoading || isDocLoading;
 
     if (isLoading) {
-        return <TamilAppLayout><div>Loading...</div></TamilAppLayout>;
+        return <TamilAppLayout><div>ஏற்றுகிறது...</div></TamilAppLayout>;
     }
     
     if (!user) {
@@ -61,7 +66,7 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                         <div>
                             <CardTitle className="text-2xl">{user.name}</CardTitle>
                             <p className="text-muted-foreground">பயனர் ஐடி: {user.id}</p>
-                             <p className="text-sm text-muted-foreground">சேர்ந்த நாள்: {user.joinDate}</p>
+                             <p className="text-sm text-muted-foreground">சேர்ந்த நாள்: {new Date(user.joinDate).toLocaleDateString('ta-IN')}</p>
                         </div>
                         <Badge variant="secondary">செயலில் உள்ள திட்டம்</Badge>
                     </CardHeader>
@@ -95,11 +100,8 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {user.transactions.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
-                                    </TableRow>
-                                ) : user.transactions.map((tx: any) => (
+                                {user.transactions && user.transactions.length > 0 ? (
+                                    user.transactions.map((tx: any) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>{tx.date}</TableCell>
                                         <TableCell>{tx.description}</TableCell>
@@ -107,7 +109,12 @@ export default function DiwaliUserDetailPage({ params }: { params: { id: string 
                                             + {formatCurrency(tx.amount)}
                                         </TableCell>
                                     </TableRow>
-                                ))}
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="text-center">பரிவர்த்தனைகள் எதுவும் இல்லை.</TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </CardContent>

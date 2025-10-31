@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { CameraCapture } from "@/components/CameraCapture";
+import { cn } from "@/lib/utils";
 
 export default function NewDiwaliSchemePage() {
   const { toast } = useToast();
@@ -41,7 +42,10 @@ export default function NewDiwaliSchemePage() {
   const [frequency, setFrequency] = useState<string | undefined>();
   const [estimatedReturn, setEstimatedReturn] = useState(0);
 
-  
+  const [isStep1Completed, setIsStep1Completed] = useState(false);
+  const [newUser, setNewUser] = useState<any>(null);
+
+
   const currentDate = new Date().toLocaleDateString('ta-IN', {
     day: 'numeric',
     month: 'long',
@@ -70,25 +74,54 @@ export default function NewDiwaliSchemePage() {
   }, [contribution, frequency]);
 
 
-  const handleSubmit = () => {
-    if (!fullName || !contribution || !frequency) {
+  const handleRegisterUser = () => {
+    if (!fullName) {
         toast({
             variant: "destructive",
             title: "தகவல் இல்லை",
-            description: "தயவுசெய்து பெயர், பங்களிப்புத் தொகை மற்றும் கால இடைவெளியை நிரப்பவும்.",
+            description: "தயவுசெய்து முழுப் பெயரை நிரப்பவும்.",
         });
         return;
     }
-
-    const newUser = {
+    
+    const userToCreate = {
         id: `ds_user_${Date.now()}`,
         name: fullName,
+        contribution: 0,
+        frequency: '',
+        totalSaved: 0,
+        avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
+        joinDate: new Date().toISOString().split('T')[0],
+        estimatedBonus: 0,
+        transactions: []
+    };
+
+    setNewUser(userToCreate);
+    setIsStep1Completed(true);
+    toast({
+        title: "பயனர் பதிவு செய்யப்பட்டது",
+        description: `${fullName} பதிவு செய்யப்பட்டார். இப்போது பங்களிப்புத் திட்டத்தைத் தேர்ந்தெடுக்கவும்.`,
+    });
+  };
+
+  const handleFinalSubmit = () => {
+    if (!newUser || !contribution || !frequency) {
+         toast({
+            variant: "destructive",
+            title: "தகவல் இல்லை",
+            description: "தயவுசெய்து பங்களிப்புத் தொகை மற்றும் கால இடைவெளியை தேர்ந்தெடுக்கவும்.",
+        });
+        return;
+    }
+    
+    const totalContribution = (Number(contribution) * (frequency === 'weekly' ? 44 : 11));
+
+    const finalUserData = {
+        ...newUser,
         contribution: Number(contribution),
         frequency: frequency,
         totalSaved: Number(contribution), // Initial contribution
-        avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
-        joinDate: new Date().toISOString().split('T')[0],
-        estimatedBonus: (estimatedReturn - (Number(contribution) * (frequency === 'weekly' ? 44 : 11))),
+        estimatedBonus: totalContribution * 0.10,
         transactions: [{
             id: `txn_${Date.now()}`,
             date: new Date().toLocaleDateString('ta-IN'),
@@ -96,16 +129,15 @@ export default function NewDiwaliSchemePage() {
             amount: Number(contribution),
         }]
     };
-    
-    setDiwaliUsers([...diwaliUsers, newUser]);
 
+    setDiwaliUsers([...diwaliUsers, finalUserData]);
     toast({
         title: "பயனர் சேர்க்கப்பட்டார்!",
         description: `${fullName} தீபாவளி சிட் திட்டத்தில் சேர்க்கப்பட்டார்.`,
     });
 
     router.push("/diwali-scheme/users-tamil");
-  };
+  }
 
   const handleLivePhotoCapture = (dataUri: string) => {
     setCapturedImage(dataUri);
@@ -154,16 +186,16 @@ export default function NewDiwaliSchemePage() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="full-name">முழு பெயர்</Label>
-                                <Input id="full-name" placeholder="எ.கா., பிரியா" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                                <Input id="full-name" placeholder="எ.கா., பிரியா" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={isStep1Completed}/>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
-                                    <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} />
+                                    <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} disabled={isStep1Completed}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
-                                    <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} />
+                                    <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} disabled={isStep1Completed}/>
                                 </div>
                             </div>
                         </CardContent>
@@ -176,18 +208,22 @@ export default function NewDiwaliSchemePage() {
                             <CardDescription>ஒரு தெளிவான படத்தைப் பிடிக்கவும்</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center space-y-4">
-                            <CameraCapture onCapture={handleLivePhotoCapture} />
+                            <div className={cn(isStep1Completed && "pointer-events-none opacity-50")}>
+                                <CameraCapture onCapture={handleLivePhotoCapture} />
+                            </div>
                         </CardContent>
                      </Card>
                   </div>
             </div>
         </div>
 
-        <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
+        {!isStep1Completed && (
+            <Button className="w-full" onClick={handleRegisterUser}>பதிவு செய்து அடுத்து செல்லவும்</Button>
+        )}
 
-        <div className="space-y-4">
+        <div className={cn("space-y-4 transition-opacity", !isStep1Completed && "opacity-50 pointer-events-none")}>
             <p className="text-lg font-semibold text-primary">படி 2: பங்களிப்புத் திட்டம்</p>
-            <p className="text-muted-foreground">முதலில் படி 1 ஐ முடிக்கவும்</p>
+            <p className="text-muted-foreground">{isStep1Completed ? "உங்கள் சேமிப்புத் திட்டத்தைத் தேர்ந்தெடுக்கவும்" : "முதலில் படி 1 ஐ முடிக்கவும்"}</p>
 
             <Card>
                 <CardHeader>
@@ -196,7 +232,7 @@ export default function NewDiwaliSchemePage() {
                 <CardContent className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label>பங்களிப்புத் தொகை</Label>
-                        <Select value={contribution} onValueChange={setContribution}>
+                        <Select value={contribution} onValueChange={setContribution} disabled={!isStep1Completed}>
                             <SelectTrigger>
                                 <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
                             </SelectTrigger>
@@ -209,7 +245,7 @@ export default function NewDiwaliSchemePage() {
                     </div>
                     <div className="space-y-2">
                         <Label>கால இடைவெளி</Label>
-                        <Select value={frequency} onValueChange={setFrequency}>
+                        <Select value={frequency} onValueChange={setFrequency} disabled={!isStep1Completed}>
                             <SelectTrigger>
                                 <SelectValue placeholder="கால இடைவெளியைத் தேர்ந்தெடுக்கவும்" />
                             </SelectTrigger>
@@ -231,7 +267,7 @@ export default function NewDiwaliSchemePage() {
             </Alert>
         </div>
         
-        <div className="space-y-4">
+        <div className={cn("space-y-4 transition-opacity", !isStep1Completed && "opacity-50 pointer-events-none")}>
             <Card className="bg-muted/50">
                 <CardHeader>
                     <CardTitle>மதிப்பிடப்பட்ட தீபாவளி வருமானம்</CardTitle>
@@ -249,6 +285,12 @@ export default function NewDiwaliSchemePage() {
                 </CardContent>
             </Card>
         </div>
+
+        {isStep1Completed && (
+            <Button className="w-full" onClick={handleFinalSubmit}>
+                சேமிப்புத் திட்டத்தை உறுதிசெய்து பயனரைச் சேர்க்கவும்
+            </Button>
+        )}
       </div>
     </TamilAppLayout>
   );

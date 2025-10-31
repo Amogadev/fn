@@ -26,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
@@ -35,6 +35,7 @@ export default function LoanUsersPage() {
     const { toast } = useToast();
     const [currentDate, setCurrentDate] = useState('');
     const firestore = useFirestore();
+    const { user, isUserLoading } = useUser();
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -43,10 +44,10 @@ export default function LoanUsersPage() {
     }, []);
 
     const loanUsersQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
+        if (!firestore || !user) return null;
         return collection(firestore, 'loan-users');
-    }, [firestore]);
-    const { data: loanUsers, isLoading } = useCollection(loanUsersQuery);
+    }, [firestore, user]);
+    const { data: loanUsers, isLoading: isLoanUsersLoading } = useCollection(loanUsersQuery);
 
     const handleDeleteUser = (userId: string) => {
         if (!firestore) return;
@@ -66,6 +67,8 @@ export default function LoanUsersPage() {
           maximumFractionDigits: 0,
         }).format(amount);
     };
+
+    const isLoading = isUserLoading || isLoanUsersLoading;
 
     return (
     <TamilAppLayout>
@@ -149,7 +152,9 @@ export default function LoanUsersPage() {
                         <Link href={`/loans/users-tamil/${user.id}`}>
                             <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
                         </Link>
-                        <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
+                            <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
+                        </Link>
                          <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="icon"><Trash2 className="w-5 h-5 text-destructive" /></Button>

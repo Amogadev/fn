@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
@@ -34,13 +34,14 @@ export default function DiwaliSchemeUsersPage() {
   const { toast } = useToast();
   const [currentDate, setCurrentDate] = useState('');
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
 
   const diwaliUsersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return collection(firestore, 'diwali-users');
-  }, [firestore]);
+  }, [firestore, user]);
   
-  const { data: diwaliSchemeUsers, isLoading } = useCollection(diwaliUsersQuery);
+  const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading } = useCollection(diwaliUsersQuery);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -67,6 +68,8 @@ export default function DiwaliSchemeUsersPage() {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+  
+  const isLoading = isUserLoading || isDiwaliUsersLoading;
 
   return (
     <TamilAppLayout>
@@ -140,7 +143,7 @@ export default function DiwaliSchemeUsersPage() {
                         <Link href={`/diwali-scheme/users-tamil/${user.id}`}>
                             <Button variant="ghost" size="icon"><Eye className="w-5 h-5 text-muted-foreground" /></Button>
                         </Link>
-                        <Link href="/diwali-scheme/new">
+                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
                           <Button variant="ghost" size="icon"><FilePenLine className="w-5 h-5 text-muted-foreground" /></Button>
                         </Link>
                         <AlertDialog>

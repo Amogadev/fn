@@ -14,13 +14,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
+    const { id } = params;
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
     
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !authUser) return null;
-        return doc(firestore, 'diwali-users', params.id);
-    }, [firestore, authUser, params.id]);
+        return doc(firestore, 'diwali-users', id);
+    }, [firestore, authUser, id]);
 
     const { data: user, isLoading: isDocLoading } = useDoc(userDocRef);
 

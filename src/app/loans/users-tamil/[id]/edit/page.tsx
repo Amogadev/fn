@@ -22,11 +22,11 @@ import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
 export default function EditLoanUserPage({ params }: { params: { id: string } }) {
+  const id = params.id;
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
   const { user: authUser, isUserLoading } = useUser();
-  const id = params.id;
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !id || !authUser) return null;

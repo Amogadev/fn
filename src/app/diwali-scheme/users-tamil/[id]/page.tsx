@@ -14,9 +14,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default function DiwaliUserDetailPage({ params }: { params: { id: string } }) {
+    const id = params.id;
     const firestore = useFirestore();
     const { user: authUser, isUserLoading: isAuthLoading } = useUser();
-    const id = params.id;
     
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !authUser || !id) return null;

@@ -183,6 +183,8 @@ export default function NewDiwaliSchemePage() {
             </div>
         </div>
 
+        <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
+
         <div className="space-y-4">
             <p className="text-lg font-semibold text-primary">படி 2: பங்களிப்புத் திட்டம்</p>
             <p className="text-muted-foreground">முதலில் படி 1 ஐ முடிக்கவும்</p>
@@ -246,8 +248,6 @@ export default function NewDiwaliSchemePage() {
                     </p>
                 </CardContent>
             </Card>
-
-            <Button className="w-full" onClick={handleSubmit}>பதிவு செய்து அடுத்து செல்லவும்</Button>
         </div>
       </div>
     </TamilAppLayout>

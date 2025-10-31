@@ -21,8 +21,7 @@ import { useDoc, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { notFound } from "next/navigation";
 
-export default function EditLoanUserPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function EditLoanUserPage({ params: { id } }: { params: { id: string } }) {
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();

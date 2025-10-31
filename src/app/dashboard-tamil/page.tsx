@@ -35,8 +35,11 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useUser, useAuth } from "@/firebase";
 import { collection } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+
 
 const ActionCard = ({
   title,
@@ -83,6 +86,8 @@ export default function DashboardTamilPage() {
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
   const firestore = useFirestore();
+  const auth = useAuth();
+  const router = useRouter();
   const { user, isUserLoading } = useUser();
   const [isClient, setIsClient] = useState(false);
 
@@ -150,6 +155,13 @@ export default function DashboardTamilPage() {
     setTheme(newTheme);
   }
 
+  const handleLogout = async () => {
+    if (auth) {
+        await signOut(auth);
+        router.push('/');
+    }
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ta-IN', {
       style: 'currency',
@@ -203,12 +215,10 @@ export default function DashboardTamilPage() {
                               />
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <Link href="/">
-                              <DropdownMenuItem>
-                                  <LogOut className="w-4 h-4 mr-2" />
-                                  <span>வெளியேறு</span>
-                              </DropdownMenuItem>
-                          </Link>
+                          <DropdownMenuItem onClick={handleLogout}>
+                              <LogOut className="w-4 h-4 mr-2" />
+                              <span>வெளியேறு</span>
+                          </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                 </nav>
@@ -324,5 +334,3 @@ export default function DashboardTamilPage() {
     </TamilAppLayout>
   );
 }
-
-    

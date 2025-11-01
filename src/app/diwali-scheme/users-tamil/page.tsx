@@ -287,12 +287,6 @@ export default function DiwaliSchemeUsersPage() {
                                                             <Eye className="mr-2 h-4 w-4" />
                                                             பரிவர்த்தனைகளைப் பார்க்க
                                                         </DropdownMenuItem>
-                                                        <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
-                                                            <DropdownMenuItem>
-                                                                <FilePenLine className="mr-2 h-4 w-4" />
-                                                                திருத்து
-                                                            </DropdownMenuItem>
-                                                        </Link>
                                                         <DropdownMenuItem
                                                             onClick={() => handleDelete(user.id, user.name)}
                                                             className="text-destructive"
@@ -364,12 +358,6 @@ export default function DiwaliSchemeUsersPage() {
                                     <Eye className="mr-2 h-4 w-4" />
                                     <span>பரிவர்த்தனைகளைப் பார்க்க</span>
                                 </DropdownMenuItem>
-                                <Link href={`/diwali-scheme/users-tamil/${user.id}/edit`}>
-                                     <DropdownMenuItem>
-                                        <FilePenLine className="mr-2 h-4 w-4" />
-                                        <span>திருத்து</span>
-                                    </DropdownMenuItem>
-                                </Link>
                                 <DropdownMenuItem onClick={() => handleDelete(user.id, user.name)} className="text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>நீக்கு</span>

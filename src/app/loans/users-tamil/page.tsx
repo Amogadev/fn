@@ -284,12 +284,6 @@ export default function LoanUsersPage() {
                                                             <Eye className="mr-2 h-4 w-4" />
                                                             பரிவர்த்தனைகளைப் பார்க்க
                                                         </DropdownMenuItem>
-                                                        <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                                                            <DropdownMenuItem>
-                                                                <FilePenLine className="mr-2 h-4 w-4" />
-                                                                திருத்து
-                                                            </DropdownMenuItem>
-                                                        </Link>
                                                         <DropdownMenuItem
                                                             onClick={() => handleDelete(user.id, user.name)}
                                                             className="text-destructive"
@@ -361,12 +355,6 @@ export default function LoanUsersPage() {
                                     <Eye className="mr-2 h-4 w-4" />
                                     <span>பார்வை</span>
                                 </DropdownMenuItem>
-                                <Link href={`/loans/users-tamil/${user.id}/edit`}>
-                                     <DropdownMenuItem>
-                                        <FilePenLine className="mr-2 h-4 w-4" />
-                                        <span>திருத்து</span>
-                                    </DropdownMenuItem>
-                                </Link>
                                 <DropdownMenuItem onClick={() => handleDelete(user.id, user.name)} className="text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>நீக்கு</span>
@@ -460,5 +448,3 @@ export default function LoanUsersPage() {
     </TamilAppLayout>
   );
 }
-
-    

@@ -127,14 +127,15 @@ export default function DashboardTamilPage() {
       }));
 
     if (loanUsers && diwaliUsers) {
-      const initialLoanCapital = 0;
+      const initialLoanCapital = 0; 
       const loanUsersCount = loanUsers.length;
       const diwaliUsersCount = diwaliUsers.length;
     
       const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
+      const totalPaidAmount = loanUsers.reduce((acc, user) => acc + (user.paidAmount || 0), 0);
       const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
       
-      const calculatedLoanWallet = initialLoanCapital - totalLoansGiven;
+      const calculatedLoanWallet = initialLoanCapital - totalLoansGiven + totalPaidAmount;
       const loanWallet = Math.max(0, calculatedLoanWallet);
       const diwaliWallet = totalDiwaliSavings;
 

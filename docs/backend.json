@@ -105,6 +105,10 @@
         "estimatedBonus": {
           "type": "number",
           "description": "The estimated bonus the user will receive."
+        },
+        "idProof": {
+          "type": "string",
+          "description": "User's identification proof number (e.g., Aadhaar, Roll No.)."
         }
       },
       "required": [
@@ -152,6 +156,10 @@
             "type": "string",
             "format": "date",
             "description": "The date the user took the loan."
+          },
+          "idProof": {
+            "type": "string",
+            "description": "User's identification proof number (e.g., Aadhaar, Roll No.)."
           }
         },
         "required": [
@@ -443,3 +451,5 @@
     "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. Authorization independence is achieved through denormalization of authorization data. Data segregation ensures that collections have homogeneous security postures, and access modeling provides a consistent approach to authorization. The structure includes paths for users, vaults, loans, transactions, and repayments, ensuring comprehensive coverage of the LendEase application's data requirements. \n\nVaults are stored in a top-level collection. Each vault document contains financial summary data. Users are stored in a top-level collection, with user documents containing personal information. Loans are stored as subcollections of users (`/users/{userId}/loans/{loanId}`), enabling path-based ownership. Transactions and Repayments are stored as subcollections of Loans (`/users/{userId}/loans/{loanId}/transactions/{transactionId}` and `/users/{userId}/loans/{loanId}/repayments/{repaymentId}`), thus maintaining clear ownership and enabling efficient querying. This structure facilitates secure `list` operations because security rules can be applied at the collection level based on the user ID. The admin role is managed via the `/roles_admin/{userId}` document, allowing for role-based access control without relying on custom claims. The `diwali-users` and `loan-users` collections are a top-level collections for managing participants in their respective schemes."
   }
 }
+
+    

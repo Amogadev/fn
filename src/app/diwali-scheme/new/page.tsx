@@ -94,7 +94,8 @@ export default function NewDiwaliSchemePage() {
         avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
         joinDate: new Date().toISOString().split('T')[0],
         estimatedBonus: 0,
-        transactions: []
+        transactions: [],
+        idProof: aadhaar,
     };
 
     setNewUser(userToCreate);
@@ -298,3 +299,5 @@ export default function NewDiwaliSchemePage() {
     </TamilAppLayout>
   );
 }
+
+    

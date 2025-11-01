@@ -43,6 +43,7 @@ type LoanUser = {
     loanAmount: number;
     paidAmount: number;
     status: string;
+    idProof?: string;
     transactions?: { id: string; date: string; description: string; type: 'credit' | 'debit'; amount: number }[];
 };
 
@@ -72,9 +73,11 @@ export default function LoanUsersPage() {
 
     const filteredUsers = useMemo(() => {
         if (!loanUsers) return [];
-        return loanUsers.filter((user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return loanUsers.filter((user) => {
+            const nameMatch = user.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const idProofMatch = user.idProof ? user.idProof.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+            return nameMatch || idProofMatch;
+        });
     }, [loanUsers, searchTerm]);
 
 
@@ -195,7 +198,7 @@ export default function LoanUsersPage() {
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="பயனரைத் தேடு..."
+                      placeholder="பெயர் / ரோல் எண் மூலம் தேடு..."
                       className="pl-10"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -249,7 +252,10 @@ export default function LoanUsersPage() {
                                                     <AvatarImage src={user.avatarUrl} alt={user.name} />
                                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
-                                                <span className="font-medium">{user.name}</span>
+                                                <div>
+                                                    <p className="font-medium">{user.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{user.idProof}</p>
+                                                </div>
                                             </div>
                                         </TableCell>
                                         <TableCell>{formatCurrency(user.loanAmount)}</TableCell>
@@ -330,6 +336,7 @@ export default function LoanUsersPage() {
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <h3 className="text-xl font-semibold">{user.name}</h3>
+                    <p className="text-sm text-muted-foreground">{user.idProof}</p>
                     <div className="space-y-1 text-sm text-left">
                         <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{formatCurrency(user.loanAmount)}</span></div>
                         <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{formatCurrency(user.paidAmount)}</span></div>

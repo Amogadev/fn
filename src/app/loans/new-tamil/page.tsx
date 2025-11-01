@@ -85,7 +85,8 @@ export default function NewLoanTamilPage() {
       status: "செயலில்", // Active
       avatarUrl: capturedImage || `https://picsum.photos/seed/${Date.now()}/100/100`,
       joinDate: new Date().toISOString().split('T')[0],
-      transactions: []
+      transactions: [],
+      idProof: idProof,
     };
 
     setNewUser(userToCreate);
@@ -312,3 +313,5 @@ export default function NewLoanTamilPage() {
     </TamilAppLayout>
     );
 }
+
+    

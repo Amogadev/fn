@@ -241,17 +241,15 @@ export default function NewDiwaliSchemePage() {
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>பங்களிப்புத் தொகை</Label>
-                        <Select value={contribution} onValueChange={setContribution} disabled={!isStep1Completed}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="தொகையைத் தேர்ந்தெடுக்கவும்" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="100">₹100</SelectItem>
-                                <SelectItem value="1000">₹1,000</SelectItem>
-                                <SelectItem value="5000">₹5,000</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Label htmlFor="contribution-amount">பங்களிப்புத் தொகை</Label>
+                        <Input
+                            id="contribution-amount"
+                            type="number"
+                            placeholder="தொகையை உள்ளிடவும்"
+                            value={contribution || ""}
+                            onChange={(e) => setContribution(e.target.value)}
+                            disabled={!isStep1Completed}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label>கால இடைவெளி</Label>

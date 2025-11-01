@@ -354,7 +354,7 @@ export default function LoanUsersPage() {
                                     <MoreHorizontal className="h-5 w-5" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
+                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenuLabel>செயல்கள்</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={(e) => handleViewClick(e, user)}>
@@ -460,3 +460,5 @@ export default function LoanUsersPage() {
     </TamilAppLayout>
   );
 }
+
+    

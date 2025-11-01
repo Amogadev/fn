@@ -178,9 +178,9 @@ export default function NewLoanTamilPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="roll-no">
-                        Roll No
+                        ரோல் எண்
                       </Label>
-                      <Input id="roll-no" placeholder="Enter Roll No" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
+                      <Input id="roll-no" placeholder="ரோல் எண்ணை உள்ளிடவும்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
                     </div>
                   </CardContent>
                 </Card>

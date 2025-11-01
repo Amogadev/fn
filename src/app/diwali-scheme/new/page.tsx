@@ -38,7 +38,7 @@ export default function NewDiwaliSchemePage() {
   const firestore = useFirestore();
   
   const [fullName, setFullName] = useState("");
-  const [aadhaar, setAadhaar] = useState("");
+  const [idProof, setIdProof] = useState("");
   const [contact, setContact] = useState("");
   const [contribution, setContribution] = useState<string | undefined>();
   const [frequency, setFrequency] = useState<string | undefined>();
@@ -95,7 +95,7 @@ export default function NewDiwaliSchemePage() {
         joinDate: new Date().toISOString().split('T')[0],
         estimatedBonus: 0,
         transactions: [],
-        idProof: aadhaar,
+        idProof: idProof,
     };
 
     setNewUser(userToCreate);
@@ -194,8 +194,8 @@ export default function NewDiwaliSchemePage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="aadhaar-number">ஆதார் எண்</Label>
-                                    <Input id="aadhaar-number" placeholder="எ.கா., 1234 5678 9012" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} disabled={isStep1Completed}/>
+                                    <Label htmlFor="roll-no">ரோல் எண்</Label>
+                                    <Input id="roll-no" placeholder="ரோல் எண்ணை உள்ளிடவும்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="contact-number">தொலைபேசி எண்</Label>

@@ -39,6 +39,7 @@ export default function NewDiwaliSchemePage() {
   
   const [fullName, setFullName] = useState("");
   const [idProof, setIdProof] = useState("");
+  const [aadhaarNo, setAadhaarNo] = useState("");
   const [contact, setContact] = useState("");
   const [contribution, setContribution] = useState<string | undefined>();
   const [frequency, setFrequency] = useState<string | undefined>();
@@ -96,6 +97,7 @@ export default function NewDiwaliSchemePage() {
         estimatedBonus: 0,
         transactions: [],
         idProof: idProof,
+        aadhaarNo: aadhaarNo,
     };
 
     setNewUser(userToCreate);
@@ -198,9 +200,13 @@ export default function NewDiwaliSchemePage() {
                                     <Input id="roll-no" placeholder="ரோல் எண்ணை உள்ளிடவும்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
-                                    <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} disabled={isStep1Completed}/>
+                                    <Label htmlFor="aadhaar-no">ஆதார் எண்</Label>
+                                    <Input id="aadhaar-no" placeholder="ஆதார் எண்ணை உள்ளிடவும்" value={aadhaarNo} onChange={(e) => setAadhaarNo(e.target.value)} disabled={isStep1Completed}/>
                                 </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="contact-number">தொலைபேசி எண்</Label>
+                                <Input id="contact-number" placeholder="எ.கா., +91 98765 43210" value={contact} onChange={(e) => setContact(e.target.value)} disabled={isStep1Completed}/>
                             </div>
                         </CardContent>
                     </Card>
@@ -300,4 +306,3 @@ export default function NewDiwaliSchemePage() {
   );
 }
 
-    

@@ -177,10 +177,10 @@ export default function NewLoanTamilPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="aadhaar-number">
-                        அடையாளச் சான்று (ஆதார்)
+                      <Label htmlFor="roll-no">
+                        Roll No
                       </Label>
-                      <Input id="aadhaar-number" placeholder="எ.கா., ஆதார் எண்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
+                      <Input id="roll-no" placeholder="Enter Roll No" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
                     </div>
                   </CardContent>
                 </Card>

@@ -14,7 +14,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
@@ -65,6 +65,7 @@ export default function DiwaliSchemeUsersPage() {
   const [transactionsUser, setTransactionsUser] = useState<DiwaliUser | null>(null);
   const [paymentUser, setPaymentUser] = useState<DiwaliUser | null>(null);
   const [paymentAmount, setPaymentAmount] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const diwaliUsersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -74,6 +75,13 @@ export default function DiwaliSchemeUsersPage() {
   const { data: diwaliSchemeUsers, isLoading: isDiwaliUsersLoading, error } = useCollection<DiwaliUser>(diwaliUsersQuery);
 
   const [isClient, setIsClient] = useState(false);
+
+  const filteredUsers = useMemo(() => {
+    if (!diwaliSchemeUsers) return [];
+    return diwaliSchemeUsers.filter((user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [diwaliSchemeUsers, searchTerm]);
 
   useEffect(() => {
     setIsClient(true);
@@ -193,7 +201,12 @@ export default function DiwaliSchemeUsersPage() {
             <div className="flex justify-between items-center gap-4">
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="பயனரைத் தேடு..." className="pl-10" />
+                    <Input
+                      placeholder="பயனரைத் தேடு..."
+                      className="pl-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
                 <div className="flex gap-2">
                     <Link href="/dashboard-tamil">
@@ -233,8 +246,8 @@ export default function DiwaliSchemeUsersPage() {
                                         பயனர்களை ஏற்றுகிறது...
                                     </TableCell>
                                 </TableRow>
-                            ) : diwaliSchemeUsers && diwaliSchemeUsers.length > 0 ? (
-                                diwaliSchemeUsers.map((user) => (
+                            ) : filteredUsers && filteredUsers.length > 0 ? (
+                                filteredUsers.map((user) => (
                                     <TableRow key={user.id}>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
@@ -308,12 +321,12 @@ export default function DiwaliSchemeUsersPage() {
                 <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
             </div>
           )}
-          {!isLoading && diwaliSchemeUsers && diwaliSchemeUsers.length === 0 ? (
+          {!isLoading && filteredUsers && filteredUsers.length === 0 ? (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
             </div>
           ) : (
-            diwaliSchemeUsers && diwaliSchemeUsers.map((user) => (
+            filteredUsers && filteredUsers.map((user) => (
               <Card key={user.id} className="flex flex-col text-center">
                  <CardContent className="flex-1 p-6 space-y-4" onClick={() => handleCardClick(user)}>
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
@@ -445,4 +458,5 @@ export default function DiwaliSchemeUsersPage() {
 }
  
 
+    
     

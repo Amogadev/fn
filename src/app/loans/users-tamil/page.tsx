@@ -13,7 +13,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
 import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
@@ -56,6 +56,7 @@ export default function LoanUsersPage() {
     const [transactionsUser, setTransactionsUser] = useState<LoanUser | null>(null);
     const [repaymentUser, setRepaymentUser] = useState<LoanUser | null>(null);
     const [repaymentAmount, setRepaymentAmount] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     useEffect(() => {
@@ -68,6 +69,14 @@ export default function LoanUsersPage() {
         return collection(firestore, 'loan-users');
     }, [firestore, user]);
     const { data: loanUsers, isLoading: isLoanUsersLoading } = useCollection<LoanUser>(loanUsersQuery);
+
+    const filteredUsers = useMemo(() => {
+        if (!loanUsers) return [];
+        return loanUsers.filter((user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [loanUsers, searchTerm]);
+
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('ta-IN', {
@@ -185,7 +194,12 @@ export default function LoanUsersPage() {
             <div className="flex justify-between items-center gap-4">
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="பயனரைத் தேடு..." className="pl-10" />
+                    <Input
+                      placeholder="பயனரைத் தேடு..."
+                      className="pl-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
                 <div className="flex gap-2">
                     <Link href="/dashboard-tamil">
@@ -226,8 +240,8 @@ export default function LoanUsersPage() {
                                         பயனர்களை ஏற்றுகிறது...
                                     </TableCell>
                                 </TableRow>
-                            ) : loanUsers && loanUsers.length > 0 ? (
-                                loanUsers.map((user) => (
+                            ) : filteredUsers && filteredUsers.length > 0 ? (
+                                filteredUsers.map((user) => (
                                     <TableRow key={user.id}>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
@@ -303,12 +317,12 @@ export default function LoanUsersPage() {
                 <p className="text-muted-foreground">பயனர்களை ஏற்றுகிறது...</p>
             </div>
           )}
-          {!isLoading && loanUsers && loanUsers.length === 0 ? (
+          {!isLoading && filteredUsers && filteredUsers.length === 0 ? (
             <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">பயனர்கள் யாரும் இல்லை.</p>
             </div>
           ) : (
-            loanUsers && loanUsers.map((user) => (
+            filteredUsers && filteredUsers.map((user) => (
               <Card key={user.id} className="flex flex-col text-center">
                  <CardContent className="flex-1 p-6 space-y-4">
                     <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary">
@@ -439,3 +453,5 @@ export default function LoanUsersPage() {
     </TamilAppLayout>
   );
 }
+
+    

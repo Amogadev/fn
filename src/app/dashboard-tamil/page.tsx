@@ -134,7 +134,7 @@ export default function DashboardTamilPage() {
       const totalPaidAmount = loanUsers.reduce((acc, user) => acc + (user.paidAmount || 0), 0);
       const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
       
-      const loanWallet = totalPaidAmount;
+      const loanWallet = totalPaidAmount - totalLoansGiven;
       const diwaliWallet = totalDiwaliSavings;
 
       setDashboardData({
@@ -302,7 +302,7 @@ export default function DashboardTamilPage() {
               title="திட்டத்தில் சேரவும்"
               description="சேமித்து பண்டிகை போனஸ் பெறுங்கள்"
               icon={Gift}
-              className="lg:row-span-2"
+              className="lg-row-span-2"
               href="/diwali-scheme/new"
             />
             <Card className="flex flex-col justify-between p-6">

@@ -34,6 +34,16 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 
 type LoanUser = {
@@ -58,6 +68,7 @@ export default function LoanUsersPage() {
     const [repaymentUser, setRepaymentUser] = useState<LoanUser | null>(null);
     const [repaymentAmount, setRepaymentAmount] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
+    const [userToDelete, setUserToDelete] = useState<LoanUser | null>(null);
 
 
     useEffect(() => {
@@ -90,24 +101,25 @@ export default function LoanUsersPage() {
         }).format(amount);
     };
 
-    const handleDelete = async (userId: string, userName: string) => {
-      if (!firestore) return;
-      if (confirm(`'${userName}' என்ற பயனரை நீக்க விரும்புகிறீர்களா?`)) {
+    const confirmDelete = async () => {
+        if (!userToDelete || !firestore) return;
+
         try {
-          await deleteDoc(doc(firestore, "loan-users", userId));
-          toast({
-            title: "பயனர் நீக்கப்பட்டார்",
-            description: `${userName} என்பவர் நீக்கப்பட்டுவிட்டார்.`,
-          });
+            await deleteDoc(doc(firestore, "loan-users", userToDelete.id));
+            toast({
+                title: "பயனர் நீக்கப்பட்டார்",
+                description: `${userToDelete.name} என்பவர் நீக்கப்பட்டுவிட்டார்.`,
+            });
         } catch (e) {
-          console.error("Error deleting user: ", e);
-          toast({
-            variant: "destructive",
-            title: "பிழை",
-            description: "பயனரை நீக்கும்போது ஒரு பிழை ஏற்பட்டது.",
-          });
+            console.error("Error deleting user: ", e);
+            toast({
+                variant: "destructive",
+                title: "பிழை",
+                description: "பயனரை நீக்கும்போது ஒரு பிழை ஏற்பட்டது.",
+            });
+        } finally {
+            setUserToDelete(null);
         }
-      }
     };
 
     const handleViewClick = (e: React.MouseEvent, user: LoanUser) => {
@@ -285,7 +297,7 @@ export default function LoanUsersPage() {
                                                             பரிவர்த்தனைகளைப் பார்க்க
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
-                                                            onClick={() => handleDelete(user.id, user.name)}
+                                                            onClick={() => setUserToDelete(user)}
                                                             className="text-destructive"
                                                         >
                                                             <Trash2 className="mr-2 h-4 w-4" />
@@ -355,7 +367,7 @@ export default function LoanUsersPage() {
                                     <Eye className="mr-2 h-4 w-4" />
                                     <span>பார்வை</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(user.id, user.name)} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setUserToDelete(user)} className="text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>நீக்கு</span>
                                 </DropdownMenuItem>
@@ -444,6 +456,24 @@ export default function LoanUsersPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!userToDelete} onOpenChange={(isOpen) => !isOpen && setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>நீக்குவதை உறுதிப்படுத்தவும்</AlertDialogTitle>
+            <AlertDialogDescription>
+              நீங்கள் '{userToDelete?.name}' என்ற பயனரை நிரந்தரமாக நீக்க உள்ளீர்கள். இந்தச் செயலைச் செயல்தவிர்க்க முடியாது.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setUserToDelete(null)}>ரத்துசெய்</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+              நீக்கு
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </TamilAppLayout>
   );

@@ -127,7 +127,6 @@ export default function DashboardTamilPage() {
       }));
 
     if (loanUsers && diwaliUsers) {
-      const initialLoanCapital = 100000; 
       const loanUsersCount = loanUsers.length;
       const diwaliUsersCount = diwaliUsers.length;
     
@@ -135,8 +134,7 @@ export default function DashboardTamilPage() {
       const totalPaidAmount = loanUsers.reduce((acc, user) => acc + (user.paidAmount || 0), 0);
       const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
       
-      const calculatedLoanWallet = initialLoanCapital - totalLoansGiven + totalPaidAmount;
-      const loanWallet = calculatedLoanWallet;
+      const loanWallet = totalPaidAmount;
       const diwaliWallet = totalDiwaliSavings;
 
       setDashboardData({

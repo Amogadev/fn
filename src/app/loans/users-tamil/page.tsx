@@ -460,6 +460,3 @@ export default function LoanUsersPage() {
     </TamilAppLayout>
   );
 }
-
-    
-    

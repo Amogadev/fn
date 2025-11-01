@@ -463,6 +463,3 @@ export default function DiwaliSchemeUsersPage() {
     </TamilAppLayout>
   );
 }
-
-    
-    

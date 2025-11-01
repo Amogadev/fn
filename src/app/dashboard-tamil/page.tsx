@@ -127,7 +127,7 @@ export default function DashboardTamilPage() {
       }));
 
     if (loanUsers && diwaliUsers) {
-      const initialLoanCapital = 100000;
+      const initialLoanCapital = 0;
       const loanUsersCount = loanUsers.length;
       const diwaliUsersCount = diwaliUsers.length;
     

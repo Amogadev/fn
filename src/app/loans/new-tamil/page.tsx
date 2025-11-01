@@ -169,6 +169,12 @@ export default function NewLoanTamilPage() {
                       <Input id="full-name" placeholder="எ.கா., விராட்" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={isStep1Completed} />
                     </div>
                     <div className="space-y-2">
+                      <Label htmlFor="roll-no" className="text-left">
+                        ரோல் எண்
+                      </Label>
+                      <Input id="roll-no" placeholder="ரோல் எண்ணை உள்ளிடவும்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="contact-number">தொடர்பு எண்</Label>
                       <Input
                         id="contact-number"
@@ -176,12 +182,6 @@ export default function NewLoanTamilPage() {
                         value={contact} onChange={(e) => setContact(e.target.value)}
                         disabled={isStep1Completed}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="roll-no">
-                        ரோல் எண்
-                      </Label>
-                      <Input id="roll-no" placeholder="ரோல் எண்ணை உள்ளிடவும்" value={idProof} onChange={(e) => setIdProof(e.target.value)} disabled={isStep1Completed} />
                     </div>
                   </CardContent>
                 </Card>
@@ -313,5 +313,3 @@ export default function NewLoanTamilPage() {
     </TamilAppLayout>
     );
 }
-
-    

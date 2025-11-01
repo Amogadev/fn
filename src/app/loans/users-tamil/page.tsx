@@ -350,7 +350,7 @@ export default function LoanUsersPage() {
                         </Button>
                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
                                     <MoreHorizontal className="h-5 w-5" />
                                 </Button>
                             </DropdownMenuTrigger>

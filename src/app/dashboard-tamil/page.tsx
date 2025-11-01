@@ -134,7 +134,8 @@ export default function DashboardTamilPage() {
       const totalLoansGiven = loanUsers.reduce((acc, user) => acc + (user.loanAmount || 0), 0);
       const totalDiwaliSavings = diwaliUsers.reduce((acc, user) => acc + (user.totalSaved || 0), 0);
       
-      const loanWallet = initialLoanCapital - totalLoansGiven;
+      const calculatedLoanWallet = initialLoanCapital - totalLoansGiven;
+      const loanWallet = Math.max(0, calculatedLoanWallet);
       const diwaliWallet = totalDiwaliSavings;
 
       setDashboardData({

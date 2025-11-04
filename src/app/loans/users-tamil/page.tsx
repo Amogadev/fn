@@ -265,7 +265,7 @@ export default function LoanUsersPage() {
                                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
                                                 <div>
-                                                    <p className="text-xs text-muted-foreground">{user.idProof}</p>
+                                                    <p className="text-sm text-muted-foreground">{user.idProof}</p>
                                                     <p className="font-medium">{user.name}</p>
                                                 </div>
                                             </div>

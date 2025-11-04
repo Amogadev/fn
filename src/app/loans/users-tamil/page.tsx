@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Plus, Search, FilePenLine, Trash2, Eye, MoreHorizontal } from "lucide-react";
+import { ArrowLeft, Plus, Search, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useMemo } from "react";
@@ -265,8 +265,8 @@ export default function LoanUsersPage() {
                                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
                                                 <div>
-                                                    <p className="font-medium">{user.name}</p>
                                                     <p className="text-xs text-muted-foreground">{user.idProof}</p>
+                                                    <p className="font-medium">{user.name}</p>
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -341,8 +341,8 @@ export default function LoanUsersPage() {
                         <AvatarImage src={user.avatarUrl} alt={user.name}/>
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <h3 className="text-xl font-semibold">{user.name}</h3>
                     <p className="text-sm text-muted-foreground">{user.idProof}</p>
+                    <h3 className="text-xl font-semibold">{user.name}</h3>
                     <div className="space-y-1 text-sm text-left">
                         <div className="flex justify-between"><span>கடன்:</span> <span className="font-medium">{formatCurrency(user.loanAmount)}</span></div>
                         <div className="flex justify-between"><span>செலுத்தியது:</span> <span className="font-medium">{formatCurrency(user.paidAmount)}</span></div>
